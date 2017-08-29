@@ -1,11 +1,10 @@
 #include "CQuadrats.h"
 #include <QApplication>
 
-int main(int argc, char *argv[])
+int main(int argc, char** argv)
 {
-    QApplication a(argc, argv);
-    CQuadrats w;
-    w.show();
-
-    return a.exec();
+    QApplication app(argc, argv);
+    CQuadrats widget;
+    widget.show();
+    return app.exec();
 }

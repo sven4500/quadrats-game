@@ -9,6 +9,7 @@
 #include <QColor>
 #include <QSize>
 #include <QMouseEvent>
+#include <QMenuBar>
 
 // структура хранит ходы и активные действия игроков
 struct PLAYER_STATS
@@ -39,7 +40,10 @@ private:
     /*static QColor const sm_sideLineColor;
     static QColor const sm_activeLineColor;*/
     virtual void paintEvent(QPaintEvent* event);
+
     virtual void mouseMoveEvent(QMouseEvent* event);
+    virtual void mousePressEvent(QMouseEvent* event);
+    //virtual void mouseReleaseEvent(QMouseEvent* event);
 };
 
 #endif

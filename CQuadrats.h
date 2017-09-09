@@ -25,18 +25,47 @@ public:
 
 private:
 
-    struct LINE;
-    struct PLAYER_STATS;
+    // структура хранит информацию об отдельной линии
+    struct LINE
+    {
+        enum Orientation{Unknown = -1, Left = 0, Up, Right, Down};
+
+        LINE(): orient(Unknown)
+        {
+            pos.x = -1;
+            pos.y = -1;
+        }
+
+        LINE(int x, int y, Orientation orientation): orient(orientation)
+        {
+            pos.x = x;
+            pos.y = y;
+        }
+
+        bool isValid()const
+        {
+            return orient != Unknown;
+        }
+
+        Orientation orient; // какая сторона квадрата
+        struct{
+            int x:16;
+            int y:16;
+        }pos; // какой квадрат
+    };
+
+    // структура хранит ходы игрока
+    struct PLAYER_STATS
+    {
+        QVector<LINE> lines;
+        QColor player;
+    };
 
     /*enum{BACK_COL = 0, LINE_COL, ACTLINE_COL, P1LINE_COL, P2LINE_COL};
     QColor const sm_colorProfile[] = {
         QColor(250, 254, 255), // BACK_COL
         QColor()
     };*/
-
-    unsigned int m_dim; // размер сетки (m_dim x m_dim квадратов)
-    int m_x;
-    int m_y;
 
     static QColor const sm_backgroundColor;
     static QColor const sm_lineColor;
@@ -55,45 +84,18 @@ private:
 
     inline unsigned int getOneSize()const; // возвращает рзмер одного квдрт в пикселях
 
+    void paintBackground(QPainter& painter);
+    void paintBorder(QPainter& painter);
+    void paintCurrentLine(QPainter& painter);
+
     LINE getLine(int x, int y)const;
     LINE translateLine(LINE line)const;
 
-};
+    PLAYER_STATS m_stats[2];
+    unsigned int m_dim; // размер сетки (m_dim x m_dim квадратов)
+    int m_x;
+    int m_y;
 
-// структура хранит информацию об отдельной линии
-struct CQuadrats::LINE
-{
-    enum Orientation{Unknown = -1, Left = 0, Up, Right, Down};
-
-    LINE(): orient(Unknown)
-    {
-        pos.x = -1;
-        pos.y = -1;
-    }
-
-    LINE(int x, int y, Orientation orientation): orient(orientation)
-    {
-        pos.x = x;
-        pos.y = y;
-    }
-
-    bool isValid()const
-    {
-        return orient != Unknown;
-    }
-
-    Orientation orient; // какая сторона квадрата
-    struct{
-        int x:16;
-        int y:16;
-    }pos; // какой квадрат
-};
-
-// структура хранит ходы игрока
-struct CQuadrats::PLAYER_STATS
-{
-    QVector<LINE> lines;
-    //QColor player;
 };
 
 #endif

@@ -7,7 +7,7 @@ QColor const CQuadrats::sm_sideLineColor = QColor(243, 22, 72);
 
 CQuadrats::CQuadrats(QWidget* parent): QMainWindow(parent)
 {
-    m_dim = 20; // по-умолчанию сетка 20x20
+    m_dim = 9; // сетка по-умолчанию
 
     // создаём меню с параметрами в заголовке окна.
     {
@@ -148,77 +148,154 @@ void CQuadrats::paintEvent(QPaintEvent* event)
     QPainter painter(this);
     painter.fillRect(0, 0, width(), height(), sm_backgroundColor);
 
+    // рисуем сетку в центре окна
+    paintBackground(painter);
+
+    // сисуем границы игрового поля
+    paintBorder(painter);
+
+    // рисуем сетку в центре окна
+    paintCurrentLine(painter);
+}
+
+void CQuadrats::paintBackground(QPainter& painter)
+{
     // размер одного квадрата в пикселях
     unsigned int const oneSize = std::min(width(), height()) / m_dim;
 
-    // рисуем сетку в центре окна
+    // сюда будем сохранять пары точек начала и конца каждой линии сетки
+    QVector<QPoint> grid;
+
     {
-        // сюда будем сохранять пары точек начала и конца каждой линии сетки
-        QVector<QPoint> grid;
+        // количество горизонтальных и вертикальных линий
+        unsigned int const horzLineCount = height() / oneSize;
+        unsigned int const vertLineCount = width() / oneSize;
 
+        grid.reserve(horzLineCount * 2 + vertLineCount * 2);
+
+        for(unsigned int i = 1; i <= horzLineCount; ++i)
         {
-            // количество горизонтальных и вертикальных линий
-            unsigned int const horzLineCount = height() / oneSize;
-            unsigned int const vertLineCount = width() / oneSize;
-
-            grid.reserve(horzLineCount * 2 + vertLineCount * 2);
-
-            for(unsigned int i = 1; i <= horzLineCount; ++i)
-            {
-                unsigned int const pos = oneSize * i;
-                grid.append(QPoint(0, pos));
-                grid.append(QPoint(width(), pos));
-            }
-
-            for(unsigned int i = 1; i <= vertLineCount; ++i)
-            {
-                unsigned int const pos = oneSize * i;
-                grid.append(QPoint(pos, 0));
-                grid.append(QPoint(pos, height()));
-            }
+            unsigned int const pos = oneSize * i;
+            grid.append(QPoint(0, pos));
+            grid.append(QPoint(width(), pos));
         }
 
-        // рисуем просчмианную сетку
-        painter.setPen(sm_lineColor);
-        painter.drawLines(grid);
-
-        // рисуем красную линию
-        painter.setPen(sm_sideLineColor);
-        painter.drawLine(oneSize * 4.5, 0, oneSize * 4.5, height());
-    }
-
-    // рисуем линию на которую указывает указатель мыши
-    {
-        LINE line;
-        line = getLine(m_x, m_y);
-
-        QPen pen;
-        pen.setColor(sm_activeLineColor);
-        pen.setWidth(2);
-        painter.setPen(pen);
-
-        switch(line.orient)
+        for(unsigned int i = 1; i <= vertLineCount; ++i)
         {
-        case LINE::Left:
-            painter.drawLine(line.pos.x * oneSize, line.pos.y * oneSize,
-                line.pos.x * oneSize, (line.pos.y + 1) * oneSize);
-            break;
-        case LINE::Up:
-            painter.drawLine(line.pos.x * oneSize, line.pos.y * oneSize,
-                (line.pos.x + 1) * oneSize, line.pos.y * oneSize);
-            break;
-        case LINE::Right:
-            painter.drawLine((line.pos.x + 1) * oneSize, line.pos.y * oneSize,
-                (line.pos.x + 1) * oneSize, (line.pos.y + 1) * oneSize);
-            break;
-        case LINE::Down:
-            painter.drawLine(line.pos.x * oneSize, (line.pos.y + 1) * oneSize,
-                (line.pos.x + 1) * oneSize, (line.pos.y + 1) * oneSize);
-            break;
-        default:
-            break;
-        };
+            unsigned int const pos = oneSize * i;
+            grid.append(QPoint(pos, 0));
+            grid.append(QPoint(pos, height()));
+        }
     }
+
+    // рисуем просчмианную сетку
+    painter.setPen(sm_lineColor);
+    painter.drawLines(grid);
+
+    // рисуем красную линию
+    painter.setPen(sm_sideLineColor);
+    painter.drawLine(oneSize * 4.5, 0, oneSize * 4.5, height());
+}
+
+void CQuadrats::paintBorder(QPainter& painter)
+{
+    assert(m_dim > 0);
+
+    // размер одного квадрата в пикселях
+    unsigned int const oneSize = std::min(width(), height()) / m_dim;
+
+    // количество горизонтальных и вертикальных линий
+    unsigned int const horzLineCount = height() / oneSize;
+    unsigned int const vertLineCount = width() / oneSize;
+
+    unsigned int const halfDim = m_dim / 2;
+
+    // находим центр игрового поля
+    unsigned int const xStart = vertLineCount / 2;
+    unsigned int const yStart = horzLineCount / 2;
+
+    // устанавливаем свойства пера границ игрового поля
+    {
+        QPen pen;
+        pen.setColor(QColor(64, 64, 64));
+        pen.setWidth(2);
+
+        painter.setPen(pen);
+    }
+
+    // рисуем все горизонтальные линии
+    for(unsigned int i = 1; i <= halfDim; ++i)
+    {
+        unsigned int const x[2] = {
+            (xStart - i) * oneSize,
+            (xStart + i + 1) * oneSize
+        };
+
+        unsigned int const y[2] = {
+            (yStart - halfDim + i) * oneSize,
+            (yStart + halfDim - i + 1) * oneSize
+        };
+
+        painter.drawLine(x[0], y[0], x[0] + oneSize, y[0]);
+        painter.drawLine(x[0] + oneSize, y[0], x[0] + oneSize, y[0] - oneSize);
+
+        painter.drawLine(x[1], y[0], x[1] - oneSize, y[0]);
+        painter.drawLine(x[1] - oneSize, y[0], x[1] - oneSize, y[0] - oneSize);
+
+        painter.drawLine(x[0], y[1], x[0] + oneSize, y[1]);
+        painter.drawLine(x[0] + oneSize, y[1], x[0] + oneSize, y[1] + oneSize);
+
+        painter.drawLine(x[1], y[1], x[1] - oneSize, y[1]);
+        painter.drawLine(x[1] - oneSize, y[1], x[1] - oneSize, y[1] + oneSize);
+    }
+
+    // рисуем шляпки
+    painter.drawLine(xStart * oneSize, (yStart - halfDim) * oneSize,
+        (xStart + 1) * oneSize, (yStart - halfDim) * oneSize);
+
+    painter.drawLine(xStart * oneSize, (yStart + halfDim + 1) * oneSize,
+        (xStart + 1) * oneSize, (yStart + halfDim + 1) * oneSize);
+
+    painter.drawLine((xStart - halfDim) * oneSize, yStart * oneSize,
+        (xStart - halfDim) * oneSize, (yStart + 1) * oneSize);
+
+    painter.drawLine((xStart + halfDim + 1) * oneSize, yStart * oneSize,
+        (xStart + halfDim + 1) * oneSize, (yStart + 1) * oneSize);
+}
+
+void CQuadrats::paintCurrentLine(QPainter& painter)
+{
+    // размер одного квадрата в пикселях
+    unsigned int const oneSize = std::min(width(), height()) / m_dim;
+
+    LINE const line = getLine(m_x, m_y);
+
+    QPen pen;
+    pen.setColor(sm_activeLineColor);
+    pen.setWidth(2);
+    painter.setPen(pen);
+
+    switch(line.orient)
+    {
+    case LINE::Left:
+        painter.drawLine(line.pos.x * oneSize, line.pos.y * oneSize,
+            line.pos.x * oneSize, (line.pos.y + 1) * oneSize);
+        break;
+    case LINE::Up:
+        painter.drawLine(line.pos.x * oneSize, line.pos.y * oneSize,
+            (line.pos.x + 1) * oneSize, line.pos.y * oneSize);
+        break;
+    case LINE::Right:
+        painter.drawLine((line.pos.x + 1) * oneSize, line.pos.y * oneSize,
+            (line.pos.x + 1) * oneSize, (line.pos.y + 1) * oneSize);
+        break;
+    case LINE::Down:
+        painter.drawLine(line.pos.x * oneSize, (line.pos.y + 1) * oneSize,
+            (line.pos.x + 1) * oneSize, (line.pos.y + 1) * oneSize);
+        break;
+    default:
+        break;
+    };
 }
 
 void CQuadrats::mouseMoveEvent(QMouseEvent* event)

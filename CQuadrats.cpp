@@ -7,7 +7,8 @@ QColor const CQuadrats::sm_sideLineColor = QColor(243, 22, 72);
 
 CQuadrats::CQuadrats(QWidget* parent): QMainWindow(parent)
 {
-    m_dim = 9; // сетка по-умолчанию
+    m_dimFull = 13; // сетка по-умолчанию
+    m_dim = 9;
 
     // создаём меню с параметрами в заголовке окна.
     {
@@ -36,13 +37,13 @@ CQuadrats::~CQuadrats()
 unsigned int CQuadrats::getOneSize()const
 {
     // игровое поле никогда не должно быть нулевым
-    assert(m_dim != 0);
-    return std::min(width(), height()) / m_dim;
+    assert(m_dimFull != 0);
+    return std::min(width(), height()) / m_dimFull;
 }
 
 CQuadrats::LINE CQuadrats::getLine(int x, int y)const
 {
-    unsigned int const oneSize = std::min(width(), height()) / m_dim;
+    unsigned int const oneSize = getOneSize();
 
     if(oneSize != 0)
     {
@@ -116,17 +117,17 @@ CQuadrats::LINE CQuadrats::translateLine(LINE line)const
         unsigned int const horzLineCount = height() / oneSize;
         unsigned int const vertLineCount = width() / oneSize;
 
-        if(vertLineCount > m_dim)
+        if(vertLineCount > m_dimFull)
         {
-            line.pos.x -= (vertLineCount - m_dim) / 2;
+            line.pos.x -= (vertLineCount - m_dimFull) / 2;
         }
 
-        if(horzLineCount > m_dim)
+        if(horzLineCount > m_dimFull)
         {
-            line.pos.y -= (horzLineCount - m_dim) / 2;
+            line.pos.y -= (horzLineCount - m_dimFull) / 2;
         }
 
-        if(line.pos.x < 0 || line.pos.y < 0 || line.pos.x >= (int)m_dim || line.pos.y >= (int)m_dim)
+        if(line.pos.x < 0 || line.pos.y < 0 || line.pos.x >= (int)m_dimFull || line.pos.y >= (int)m_dimFull)
         {
             line.pos.x = 0;
             line.pos.y = 0;
@@ -161,7 +162,7 @@ void CQuadrats::paintEvent(QPaintEvent* event)
 void CQuadrats::paintBackground(QPainter& painter)
 {
     // размер одного квадрата в пикселях
-    unsigned int const oneSize = std::min(width(), height()) / m_dim;
+    unsigned int const oneSize = getOneSize();
 
     // сюда будем сохранять пары точек начала и конца каждой линии сетки
     QVector<QPoint> grid;
@@ -197,9 +198,12 @@ void CQuadrats::paintBackground(QPainter& painter)
 //    painter.drawLine(oneSize * 4.5, 0, oneSize * 4.5, height());
 }
 
+//void CQuadrats::paintCaptured(QPainter& painter, int x, int y, )
+//{}
+
 void CQuadrats::paintBorder(QPainter& painter)
 {
-    assert(m_dim > 0);
+    assert(m_dimFull > 0);
 
     // размер одного квадрата в пикселях
     unsigned int const oneSize = getOneSize();
@@ -257,7 +261,7 @@ void CQuadrats::paintBorder(QPainter& painter)
 void CQuadrats::paintCurrentLine(QPainter& painter)
 {
     // размер одного квадрата в пикселях
-    unsigned int const oneSize = std::min(width(), height()) / m_dim;
+    unsigned int const oneSize = std::min(width(), height()) / m_dimFull;
 
     LINE const line = getLine(m_x, m_y);
 

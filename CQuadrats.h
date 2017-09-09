@@ -92,7 +92,8 @@ private:
     LINE translateLine(LINE line)const;
 
     PLAYER_STATS m_stats[2];
-    unsigned int m_dim; // размер сетки (m_dim x m_dim квадратов)
+    unsigned int m_dimFull; // размер сетки (m_dim x m_dim квадратов)
+    unsigned int m_dim;
     int m_x;
     int m_y;
 

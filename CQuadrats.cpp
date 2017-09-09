@@ -226,27 +226,31 @@ void CQuadrats::paintBorder(QPainter& painter)
     // рисуем все горизонтальные линии
     for(unsigned int i = 1; i <= halfDim; ++i)
     {
-        unsigned int const x[2] = {
+        unsigned int const x[4] = {
             (xStart - i) * oneSize,
-            (xStart + i + 1) * oneSize
+            (xStart + i + 1) * oneSize,
+            x[0] + oneSize,
+            x[1] - oneSize
         };
 
-        unsigned int const y[2] = {
+        unsigned int const y[4] = {
             (yStart - halfDim + i) * oneSize,
-            (yStart + halfDim - i + 1) * oneSize
+            (yStart + halfDim - i + 1) * oneSize,
+            y[0] - oneSize,
+            y[1] + oneSize
         };
 
-        painter.drawLine(x[0], y[0], x[0] + oneSize, y[0]);
-        painter.drawLine(x[0] + oneSize, y[0], x[0] + oneSize, y[0] - oneSize);
+        painter.drawLine(x[0], y[0], x[2], y[0]);
+        painter.drawLine(x[2], y[0], x[2], y[2]);
 
-        painter.drawLine(x[1], y[0], x[1] - oneSize, y[0]);
-        painter.drawLine(x[1] - oneSize, y[0], x[1] - oneSize, y[0] - oneSize);
+        painter.drawLine(x[1], y[0], x[3], y[0]);
+        painter.drawLine(x[3], y[0], x[3], y[2]);
 
-        painter.drawLine(x[0], y[1], x[0] + oneSize, y[1]);
-        painter.drawLine(x[0] + oneSize, y[1], x[0] + oneSize, y[1] + oneSize);
+        painter.drawLine(x[0], y[1], x[2], y[1]);
+        painter.drawLine(x[2], y[1], x[2], y[3]);
 
-        painter.drawLine(x[1], y[1], x[1] - oneSize, y[1]);
-        painter.drawLine(x[1] - oneSize, y[1], x[1] - oneSize, y[1] + oneSize);
+        painter.drawLine(x[1], y[1], x[3], y[1]);
+        painter.drawLine(x[3], y[1], x[3], y[3]);
     }
 
     // рисуем шляпки

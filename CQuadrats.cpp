@@ -26,64 +26,115 @@ CQuadrats::CQuadrats(QWidget* parent): QMainWindow(parent)
 
 CQuadrats::~CQuadrats()
 {
+
 }
 
-LINE CQuadrats::getLine(int x, int y)const
+unsigned int CQuadrats::getOneSize()const
+{
+    // игровое поле никогда не должно быть нулевым
+    assert(m_dim != 0);
+    return std::min(width(), height()) / m_dim;
+}
+
+CQuadrats::LINE CQuadrats::getLine(int x, int y)const
 {
     unsigned int const oneSize = std::min(width(), height()) / m_dim;
 
-    // расстояния от точки до четырёх границ квадрата
-    unsigned int dist[4] = {};
-
-    // ситаем расстояния до границ: левой, верхней, правой и нижней соответственно
-    dist[0] = x % oneSize;
-    dist[1] = y % oneSize;
-    dist[2] = oneSize - dist[0];
-    dist[3] = oneSize - dist[1];
-
-    unsigned int orientation = 0;
-
-    // ищем границу с наименьшим расстоянием до точки
+    if(oneSize != 0)
     {
-        unsigned int d = dist[0];
-        orientation = 0;
+        // расстояния от точки до четырёх границ квадрата
+        unsigned int dist[4] = {};
 
-        // находим минимальное расстояние
-        for(unsigned int i = 1; i < 4; ++i)
+        // ситаем расстояния до границ: левой, верхней, правой и нижней соответственно
+        dist[0] = x % oneSize;
+        dist[1] = y % oneSize;
+        dist[2] = oneSize - dist[0];
+        dist[3] = oneSize - dist[1];
+
+        unsigned int orientation = 0;
+
+        // ищем границу с наименьшим расстоянием до точки
         {
-            if(dist[i] < d)
+            unsigned int d = dist[0];
+            orientation = 0;
+
+            // находим минимальное расстояние
+            for(unsigned int i = 1; i < 4; ++i)
             {
-                orientation = i;
-                d = dist[i];
+                if(dist[i] < d)
+                {
+                    orientation = i;
+                    d = dist[i];
+                }
             }
         }
+
+        LINE line;
+
+        line.pos.x = x / oneSize;
+        line.pos.y = y / oneSize;
+
+        switch(orientation)
+        {
+        case 0:
+            line.orient = LINE::Left;
+            break;
+        case 1:
+            line.orient = LINE::Up;
+            break;
+        case 2:
+            line.orient = LINE::Right;
+            break;
+        case 3:
+            line.orient = LINE::Down;
+            break;
+        default:
+            // сюда не должны попадать в принципе
+            assert(false);
+            line.orient = LINE::Unknown;
+            break;
+        }
+
+        return line;
     }
-
-    LINE line;
-
-    line.index.x = x / oneSize;
-    line.index.y = y / oneSize;
-
-    switch(orientation)
+    else
     {
-    case 0:
-        line.orientation = LINE::Left;
-        break;
-    case 1:
-        line.orientation = LINE::Up;
-        break;
-    case 2:
-        line.orientation = LINE::Right;
-        break;
-    case 3:
-        line.orientation = LINE::Down;
-        break;
-    default:
-        line.orientation = LINE::Unknown;
-        break;
+        // одна из сторон окна нулевая. возвращаем неинициализированную линию. метод isValid которой вернёт false.
+        return LINE();
     }
+}
 
-    return line;
+CQuadrats::LINE CQuadrats::translateLine(LINE line)const
+{
+    if(line.isValid() == true)
+    {
+        unsigned int const oneSize = getOneSize();
+        unsigned int const horzLineCount = height() / oneSize;
+        unsigned int const vertLineCount = width() / oneSize;
+
+        if(vertLineCount > m_dim)
+        {
+            line.pos.x -= (vertLineCount - m_dim) / 2;
+        }
+
+        if(horzLineCount > m_dim)
+        {
+            line.pos.y -= (horzLineCount - m_dim) / 2;
+        }
+
+        if(line.pos.x < 0 || line.pos.y < 0 || line.pos.x >= (int)m_dim || line.pos.y >= (int)m_dim)
+        {
+            line.pos.x = 0;
+            line.pos.y = 0;
+            line.orient = LINE::Unknown;
+        }
+
+        return line;
+    }
+    else
+    {
+        return LINE();
+    }
 }
 
 void CQuadrats::paintEvent(QPaintEvent* event)
@@ -132,7 +183,7 @@ void CQuadrats::paintEvent(QPaintEvent* event)
         painter.drawLine(oneSize * 4.5, 0, oneSize * 4.5, height());
     }
 
-    // рисуем линию на которую указывает указатель мышт
+    // рисуем линию на которую указывает указатель мыши
     {
         LINE line;
         line = getLine(m_x, m_y);
@@ -142,23 +193,23 @@ void CQuadrats::paintEvent(QPaintEvent* event)
         pen.setWidth(2);
         painter.setPen(pen);
 
-        switch(line.orientation)
+        switch(line.orient)
         {
         case LINE::Left:
-            painter.drawLine(line.index.x * oneSize, line.index.y * oneSize,
-                line.index.x * oneSize, (line.index.y + 1) * oneSize);
+            painter.drawLine(line.pos.x * oneSize, line.pos.y * oneSize,
+                line.pos.x * oneSize, (line.pos.y + 1) * oneSize);
             break;
         case LINE::Up:
-            painter.drawLine(line.index.x * oneSize, line.index.y * oneSize,
-                (line.index.x + 1) * oneSize, line.index.y * oneSize);
+            painter.drawLine(line.pos.x * oneSize, line.pos.y * oneSize,
+                (line.pos.x + 1) * oneSize, line.pos.y * oneSize);
             break;
         case LINE::Right:
-            painter.drawLine((line.index.x + 1) * oneSize, line.index.y * oneSize,
-                (line.index.x + 1) * oneSize, (line.index.y + 1) * oneSize);
+            painter.drawLine((line.pos.x + 1) * oneSize, line.pos.y * oneSize,
+                (line.pos.x + 1) * oneSize, (line.pos.y + 1) * oneSize);
             break;
         case LINE::Down:
-            painter.drawLine(line.index.x * oneSize, (line.index.y + 1) * oneSize,
-                (line.index.x + 1) * oneSize, (line.index.y + 1) * oneSize);
+            painter.drawLine(line.pos.x * oneSize, (line.pos.y + 1) * oneSize,
+                (line.pos.x + 1) * oneSize, (line.pos.y + 1) * oneSize);
             break;
         default:
             break;
@@ -168,8 +219,6 @@ void CQuadrats::paintEvent(QPaintEvent* event)
 
 void CQuadrats::mouseMoveEvent(QMouseEvent* event)
 {
-    //Q_UNUSED(event);
-
     // сохранили последние координаты указателя
     m_x = event->x();
     m_y = event->y();
@@ -182,4 +231,13 @@ void CQuadrats::mouseMoveEvent(QMouseEvent* event)
 void CQuadrats::mousePressEvent(QMouseEvent* event)
 {
     Q_UNUSED(event);
+
+    #ifdef _DEBUG
+    LINE line;
+    line = getLine(m_x, m_y);
+    qDebug() << line.pos.x << line.pos.y << line.orient;
+    line = translateLine(line);
+    qDebug() << line.pos.x << line.pos.y << line.orient;
+    qDebug() << '\n';
+    #endif
 }

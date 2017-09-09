@@ -11,8 +11,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Quadrats
 TEMPLATE = app
 
+DEFINES += _DEBUG
 
 SOURCES += main.cpp\
-        CQuadrats.cpp
+CQuadrats.cpp
 
 HEADERS  += CQuadrats.h

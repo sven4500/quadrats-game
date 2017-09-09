@@ -193,8 +193,8 @@ void CQuadrats::paintBackground(QPainter& painter)
     painter.drawLines(grid);
 
     // рисуем красную линию
-    painter.setPen(sm_sideLineColor);
-    painter.drawLine(oneSize * 4.5, 0, oneSize * 4.5, height());
+//    painter.setPen(sm_sideLineColor);
+//    painter.drawLine(oneSize * 4.5, 0, oneSize * 4.5, height());
 }
 
 void CQuadrats::paintBorder(QPainter& painter)
@@ -202,17 +202,17 @@ void CQuadrats::paintBorder(QPainter& painter)
     assert(m_dim > 0);
 
     // размер одного квадрата в пикселях
-    unsigned int const oneSize = std::min(width(), height()) / m_dim;
+    unsigned int const oneSize = getOneSize();
 
     // количество горизонтальных и вертикальных линий
     unsigned int const horzLineCount = height() / oneSize;
     unsigned int const vertLineCount = width() / oneSize;
 
-    unsigned int const halfDim = m_dim / 2;
-
     // находим центр игрового поля
-    unsigned int const xStart = vertLineCount / 2;
-    unsigned int const yStart = horzLineCount / 2;
+    unsigned int const ix = vertLineCount / 2;
+    unsigned int const iy = horzLineCount / 2;
+
+    unsigned int const dim2 = m_dim / 2;
 
     // устанавливаем свойства пера границ игрового поля
     {
@@ -224,47 +224,34 @@ void CQuadrats::paintBorder(QPainter& painter)
     }
 
     // рисуем все горизонтальные линии
-    for(unsigned int i = 1; i <= halfDim; ++i)
+    for(unsigned int i = 0; i <= dim2; ++i)
     {
         unsigned int const x[4] = {
-            (xStart - i) * oneSize,
-            (xStart + i + 1) * oneSize,
+            (ix - i) * oneSize,
+            (ix + i + 1) * oneSize,
             x[0] + oneSize,
             x[1] - oneSize
         };
 
         unsigned int const y[4] = {
-            (yStart - halfDim + i) * oneSize,
-            (yStart + halfDim - i + 1) * oneSize,
-            y[0] - oneSize,
-            y[1] + oneSize
+            (iy - dim2 + i) * oneSize,
+            (iy + dim2 - i + 1) * oneSize,
+            y[0] + oneSize,
+            y[1] - oneSize
         };
 
         painter.drawLine(x[0], y[0], x[2], y[0]);
-        painter.drawLine(x[2], y[0], x[2], y[2]);
+        painter.drawLine(x[0], y[0], x[0], y[2]);
 
         painter.drawLine(x[1], y[0], x[3], y[0]);
-        painter.drawLine(x[3], y[0], x[3], y[2]);
+        painter.drawLine(x[1], y[0], x[1], y[2]);
 
         painter.drawLine(x[0], y[1], x[2], y[1]);
-        painter.drawLine(x[2], y[1], x[2], y[3]);
+        painter.drawLine(x[0], y[1], x[0], y[3]);
 
         painter.drawLine(x[1], y[1], x[3], y[1]);
-        painter.drawLine(x[3], y[1], x[3], y[3]);
+        painter.drawLine(x[1], y[1], x[1], y[3]);
     }
-
-    // рисуем шляпки
-    painter.drawLine(xStart * oneSize, (yStart - halfDim) * oneSize,
-        (xStart + 1) * oneSize, (yStart - halfDim) * oneSize);
-
-    painter.drawLine(xStart * oneSize, (yStart + halfDim + 1) * oneSize,
-        (xStart + 1) * oneSize, (yStart + halfDim + 1) * oneSize);
-
-    painter.drawLine((xStart - halfDim) * oneSize, yStart * oneSize,
-        (xStart - halfDim) * oneSize, (yStart + 1) * oneSize);
-
-    painter.drawLine((xStart + halfDim + 1) * oneSize, yStart * oneSize,
-        (xStart + halfDim + 1) * oneSize, (yStart + 1) * oneSize);
 }
 
 void CQuadrats::paintCurrentLine(QPainter& painter)

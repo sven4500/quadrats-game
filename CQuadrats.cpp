@@ -21,7 +21,11 @@ CQuadrats::CQuadrats(QWidget* parent): QMainWindow(parent)
 
     setMouseTracking(true);
 
-    setWindowTitle("Квадраты (версия 0.13)");
+    #ifdef _DEBUG
+    setWindowTitle("Квадраты (версия 0.15 отладка)");
+    #else
+    setWindowTitle("Квадраты (версия 0.15)");
+    #endif
 }
 
 CQuadrats::~CQuadrats()

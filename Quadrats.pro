@@ -7,13 +7,18 @@
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+win32:RC_ICONS += app.ico
 
 TARGET = Quadrats
 TEMPLATE = app
 
-DEFINES += _DEBUG
+CONFIG(debug, debug|release): DEFINES += _DEBUG
+CONFIG(release, debug|release): DEFINES += NDEBUG
 
 SOURCES += main.cpp\
 CQuadrats.cpp
 
 HEADERS  += CQuadrats.h
+
+RESOURCES += \
+    resource.qrc

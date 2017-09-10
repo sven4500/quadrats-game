@@ -1,7 +1,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QRect>
-#include "CQuadrats.h"
+#include "quadrats.h"
 
 int main(int argc, char** argv)
 {

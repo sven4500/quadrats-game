@@ -16,9 +16,11 @@ CONFIG(debug, debug|release): DEFINES += _DEBUG
 CONFIG(release, debug|release): DEFINES += NDEBUG
 
 SOURCES += main.cpp\
-CQuadrats.cpp
+    quadrats_graphics.cpp \
+    quadrats_main.cpp
 
-HEADERS  += CQuadrats.h
+HEADERS  += \
+    quadrats.h
 
 RESOURCES += \
     resource.qrc

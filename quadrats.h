@@ -38,6 +38,13 @@ private:
             return true;
         }
 
+//        QUADRAT& operator+(int val)
+//        {
+//            x += val;
+//            y += val;
+//            return *this;
+//        }
+
         int x:16;
         int y:16;
     };
@@ -72,7 +79,7 @@ private:
     struct PLAYER_STATS
     {
         QVector<LINE> lines;
-        QColor player;
+        QColor playerColor;
     };
 
     /*enum{BACK_COL = 0, LINE_COL, ACTLINE_COL, P1LINE_COL, P2LINE_COL};
@@ -86,8 +93,8 @@ private:
     static QColor const sm_activeLineColor;
     static QColor const sm_sideLineColor;
 
-    //static QColor const sm_playerOneColor;
-    //static QColor const sm_playerTwoColor;
+    QColor m_playerOneColor;
+    QColor m_playerTwoColor;
     //static QColor const sm_activeLineColor;
 
     virtual void paintEvent(QPaintEvent* event);
@@ -96,15 +103,19 @@ private:
     virtual void mousePressEvent(QMouseEvent* event);
     //virtual void mouseReleaseEvent(QMouseEvent* event);
 
-    inline unsigned int getOneSize()const; // возвращает рзмер одного квдрт в пикселях
+    unsigned int getOneSize()const; // возвращает рзмер одного квдрт в пикселях
 
-    void paintBackground(QPainter& painter);
-    void paintBorder(QPainter& painter);
-    void paintCurrentQuadrat(QPainter& painter);
-    void paintCurrentLine(QPainter& painter);
+    void paintBackground(QPainter& painter)const;
+    void paintBorder(QPainter& painter)const;
+    void paintCurrentQuadrat(QPainter& painter)const;
+    void paintCurrentLine(QPainter& painter)const;
+    void paintCorner(QPainter& painter)const;
 
     // заполянет один квадрат заданным цветом
-    void fillQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor const& color);
+    void fillQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const;
+//    void fillQuadratCaptured(QPainter& painter, QUADRAT const& quadrat, unsigned int player)const;
+
+//    void markQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor const& color);
 
     // возврщает индекс квадрата в глобальной системе координат (относительно левого верхнего угла)
     QUADRAT getQuadrat(int x, int y)const;

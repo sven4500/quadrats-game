@@ -41,113 +41,114 @@ unsigned int CQuadrats::getOneSize()const
     return std::min(width(), height()) / m_dimFull;
 }
 
+CQuadrats::QUADRAT CQuadrats::getQuadrat(int x, int y)const
+{
+    unsigned int const oneSize = getOneSize();
+    return QUADRAT(x / oneSize, y / oneSize);
+}
+
 CQuadrats::LINE CQuadrats::getLine(int x, int y)const
 {
     unsigned int const oneSize = getOneSize();
 
-    if(oneSize != 0)
+    // расстояния от точки до четырёх границ квадрата
+    unsigned int dist[4] = {};
+
+    // ситаем расстояния до границ: левой, верхней, правой и нижней соответственно
+    dist[0] = x % oneSize;
+    dist[1] = y % oneSize;
+    dist[2] = oneSize - dist[0];
+    dist[3] = oneSize - dist[1];
+
+    unsigned int orientation = 0;
+
+    // ищем границу с наименьшим расстоянием до точки
     {
-        // расстояния от точки до четырёх границ квадрата
-        unsigned int dist[4] = {};
+        unsigned int d = dist[0];
+        orientation = 0;
 
-        // ситаем расстояния до границ: левой, верхней, правой и нижней соответственно
-        dist[0] = x % oneSize;
-        dist[1] = y % oneSize;
-        dist[2] = oneSize - dist[0];
-        dist[3] = oneSize - dist[1];
-
-        unsigned int orientation = 0;
-
-        // ищем границу с наименьшим расстоянием до точки
+        // находим минимальное расстояние
+        for(unsigned int i = 1; i < 4; ++i)
         {
-            unsigned int d = dist[0];
-            orientation = 0;
-
-            // находим минимальное расстояние
-            for(unsigned int i = 1; i < 4; ++i)
+            if(dist[i] < d)
             {
-                if(dist[i] < d)
-                {
-                    orientation = i;
-                    d = dist[i];
-                }
+                orientation = i;
+                d = dist[i];
             }
         }
-
-        LINE line;
-
-        line.pos.x = x / oneSize;
-        line.pos.y = y / oneSize;
-
-        switch(orientation)
-        {
-        case 0:
-            line.orient = LINE::Left;
-            break;
-        case 1:
-            line.orient = LINE::Up;
-            break;
-        case 2:
-            line.orient = LINE::Right;
-            break;
-        case 3:
-            line.orient = LINE::Down;
-            break;
-        default:
-            // сюда не должны попадать в принципе
-            assert(false);
-            line.orient = LINE::Unknown;
-            break;
-        }
-
-        return line;
     }
-    else
+
+    LINE line;
+
+    line.pos = getQuadrat(x, y);
+
+    switch(orientation)
     {
-        // одна из сторон окна нулевая. возвращаем неинициализированную линию. метод isValid которой вернёт false.
-        return LINE();
+    case 0:
+        line.orient = LINE::Left;
+        break;
+    case 1:
+        line.orient = LINE::Up;
+        break;
+    case 2:
+        line.orient = LINE::Right;
+        break;
+    case 3:
+        line.orient = LINE::Down;
+        break;
+    default:
+        // сюда не должны попадать в принципе
+        assert(false);
+        line.orient = LINE::Unknown;
+        break;
     }
+
+    return line;
 }
 
-CQuadrats::LINE CQuadrats::translateLine(LINE line)const
-{
-    if(line.isValid() == true)
-    {
-        unsigned int const oneSize = getOneSize();
-        unsigned int const horzLineCount = height() / oneSize;
-        unsigned int const vertLineCount = width() / oneSize;
+//CQuadrats::LINE CQuadrats::translateLine(LINE line)const
+//{
+//    if(line.isValid() == true)
+//    {
+//        unsigned int const oneSize = getOneSize();
+//        unsigned int const horzLineCount = height() / oneSize;
+//        unsigned int const vertLineCount = width() / oneSize;
 
-        if(vertLineCount > m_dimFull)
-        {
-            line.pos.x -= (vertLineCount - m_dimFull) / 2;
-        }
+//        if(vertLineCount > m_dimFull)
+//        {
+//            line.pos.x -= (vertLineCount - m_dimFull) / 2;
+//        }
 
-        if(horzLineCount > m_dimFull)
-        {
-            line.pos.y -= (horzLineCount - m_dimFull) / 2;
-        }
+//        if(horzLineCount > m_dimFull)
+//        {
+//            line.pos.y -= (horzLineCount - m_dimFull) / 2;
+//        }
 
-        if(line.pos.x < 0 || line.pos.y < 0 || line.pos.x >= (int)m_dimFull || line.pos.y >= (int)m_dimFull)
-        {
-            line.pos.x = 0;
-            line.pos.y = 0;
-            line.orient = LINE::Unknown;
-        }
+//        if(line.pos.x < 0 || line.pos.y < 0 || line.pos.x >= (int)m_dimFull || line.pos.y >= (int)m_dimFull)
+//        {
+//            line.pos.x = 0;
+//            line.pos.y = 0;
+//            line.orient = LINE::Unknown;
+//        }
 
-        return line;
-    }
-    else
-    {
-        return LINE();
-    }
-}
+//        return line;
+//    }
+//    else
+//    {
+//        return LINE();
+//    }
+//}
 
 void CQuadrats::paintEvent(QPaintEvent* event)
 {
     Q_UNUSED(event);
 
+    // инициализируем устройство рисования и очищем рабочу область перед рисовнием кадра
     QPainter painter(this);
     painter.fillRect(0, 0, width(), height(), sm_backgroundColor);
+
+    // подсвечиваем активный квадрат
+    paintCurrentQuadrat(painter);
 
     // рисуем сетку в центре окна
     paintBackground(painter);
@@ -155,7 +156,7 @@ void CQuadrats::paintEvent(QPaintEvent* event)
     // сисуем границы игрового поля
     paintBorder(painter);
 
-    // рисуем сетку в центре окна
+    // рисуем текущую линию
     paintCurrentLine(painter);
 }
 
@@ -258,6 +259,12 @@ void CQuadrats::paintBorder(QPainter& painter)
     }
 }
 
+void CQuadrats::paintCurrentQuadrat(QPainter& painter)
+{
+    QUADRAT const quadrat = getQuadrat(m_x, m_y);
+    fillQuadrat(painter, quadrat, QColor(190, 190, 190, 190));
+}
+
 void CQuadrats::paintCurrentLine(QPainter& painter)
 {
     // размер одного квадрата в пикселях
@@ -265,10 +272,12 @@ void CQuadrats::paintCurrentLine(QPainter& painter)
 
     LINE const line = getLine(m_x, m_y);
 
-    QPen pen;
-    pen.setColor(sm_activeLineColor);
-    pen.setWidth(2);
-    painter.setPen(pen);
+    {
+        QPen pen;
+        pen.setColor(sm_activeLineColor);
+        pen.setWidth(2);
+        painter.setPen(pen);
+    }
 
     switch(line.orient)
     {
@@ -293,6 +302,12 @@ void CQuadrats::paintCurrentLine(QPainter& painter)
     };
 }
 
+void CQuadrats::fillQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor const& color)
+{
+    unsigned int const oneSize = getOneSize();
+    painter.fillRect(quadrat.x * oneSize, quadrat.y * oneSize, oneSize, oneSize, color);
+}
+
 void CQuadrats::mouseMoveEvent(QMouseEvent* event)
 {
     // сохранили последние координаты указателя
@@ -309,11 +324,13 @@ void CQuadrats::mousePressEvent(QMouseEvent* event)
     Q_UNUSED(event);
 
     #ifdef _DEBUG
-    LINE line;
-    line = getLine(m_x, m_y);
-    qDebug() << line.pos.x << line.pos.y << line.orient;
-    line = translateLine(line);
-    qDebug() << line.pos.x << line.pos.y << line.orient;
-    qDebug() << '\n';
+    QUADRAT const quadrat = getQuadrat(m_x, m_y);
+    qDebug() << quadrat.x << quadrat.y << '\n';
+//    LINE line;
+//    line = getGlobalLine(m_x, m_y);
+//    qDebug() << line.pos.x << line.pos.y << line.orient;
+//    line = translateLine(line);
+//    qDebug() << line.pos.x << line.pos.y << line.orient;
+//    qDebug() << '\n';
     #endif
 }

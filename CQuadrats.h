@@ -25,6 +25,23 @@ public:
 
 private:
 
+    struct QUADRAT
+    {
+        QUADRAT(): x(0), y(0)
+        {}
+
+        QUADRAT(int x, int y): x(x), y(y)
+        {}
+
+        bool isValid()const
+        {
+            return true;
+        }
+
+        int x:16;
+        int y:16;
+    };
+
     // структура хранит информацию об отдельной линии
     struct LINE
     {
@@ -44,17 +61,14 @@ private:
 
         bool isValid()const
         {
-            return orient != Unknown;
+            return orient != Unknown && pos.isValid() == true;
         }
 
         Orientation orient; // какая сторона квадрата
-        struct{
-            int x:16;
-            int y:16;
-        }pos; // какой квадрат
+        QUADRAT pos; // какой квадрат
     };
 
-    // структура хранит ходы игрока
+    // структура хранит ходы одного игрока
     struct PLAYER_STATS
     {
         QVector<LINE> lines;
@@ -86,14 +100,23 @@ private:
 
     void paintBackground(QPainter& painter);
     void paintBorder(QPainter& painter);
+    void paintCurrentQuadrat(QPainter& painter);
     void paintCurrentLine(QPainter& painter);
 
+    // заполянет один квадрат заданным цветом
+    void fillQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor const& color);
+
+    // возврщает индекс квадрата в глобальной системе координат (относительно левого верхнего угла)
+    QUADRAT getQuadrat(int x, int y)const;
+//    QUADRAT translateQuadrat(QUADRAT const& quadrat)const;
+
+    // возврщает линию квадрата в глобальной системе координат (относительно левого верхнего угла)
     LINE getLine(int x, int y)const;
-    LINE translateLine(LINE line)const;
+//    LINE translateLine(LINE line)const;
 
     PLAYER_STATS m_stats[2];
-    unsigned int m_dimFull; // размер сетки (m_dim x m_dim квадратов)
-    unsigned int m_dim;
+    unsigned int m_dimFull; // размер игрового поля с учётом отступов
+    unsigned int m_dim; // размер реального игрового поля
     int m_x;
     int m_y;
 

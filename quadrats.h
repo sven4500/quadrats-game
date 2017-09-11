@@ -25,6 +25,8 @@ public:
 
 private:
 
+    enum Player{PlayerOne = 0, PlayerTwo = 1};
+
     struct QUADRAT
     {
         QUADRAT(): x(0), y(0)
@@ -115,7 +117,8 @@ private:
     void fillQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const;
 //    void fillQuadratCaptured(QPainter& painter, QUADRAT const& quadrat, unsigned int player)const;
 
-//    void markQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor const& color);
+    // Рисует внутри квадрата пиктограмму игрока.
+    void markQuadrat(QPainter& painter, QUADRAT const& quadrat, Player const& player)const;
 
     // возврщает индекс квадрата в глобальной системе координат (относительно левого верхнего угла)
     QUADRAT getQuadrat(int x, int y)const;

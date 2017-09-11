@@ -6,6 +6,8 @@ void CQuadrats::paintEvent(QPaintEvent* event)
 
     // инициализируем устройство рисования и очищем рабочу область перед рисовнием кадра
     QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
     painter.fillRect(0, 0, width(), height(), sm_backgroundColor);
 
     // заполняет цветом вершинные квадраты
@@ -127,6 +129,7 @@ void CQuadrats::paintCurrentQuadrat(QPainter& painter)const
 {
     QUADRAT const quadrat = getQuadrat(m_x, m_y);
     fillQuadrat(painter, quadrat, QColor(190, 190, 190, 190));
+//    markQuadrat(painter, quadrat, PlayerOne);
 }
 
 void CQuadrats::paintCurrentLine(QPainter& painter)const
@@ -197,4 +200,43 @@ void CQuadrats::fillQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor co
 {
     unsigned int const oneSize = getOneSize();
     painter.fillRect(quadrat.x * oneSize, quadrat.y * oneSize, oneSize, oneSize, color);
+}
+
+void CQuadrats::markQuadrat(QPainter& painter, QUADRAT const& quadrat, Player const& player)const
+{
+    unsigned int const oneSize = getOneSize();
+    unsigned int const margin = oneSize * 0.25;
+    unsigned int const margin2 = margin * 2;
+
+    QRect const rect(quadrat.x * oneSize + margin, quadrat.y * oneSize + margin,
+                     oneSize - margin2, oneSize - margin2);
+
+    switch(player)
+    {
+        case Player::PlayerOne:
+        {
+            QPen pen;
+            pen.setWidth(2);
+            pen.setColor(m_playerOneColor);
+            painter.setPen(pen);
+            painter.drawLine(rect.left(), rect.top(), rect.right(), rect.bottom());
+            painter.drawLine(rect.left(), rect.bottom(), rect.right(), rect.top());
+            break;
+        }
+        case Player::PlayerTwo:
+        {
+            QPen pen;
+            pen.setWidth(2);
+            pen.setColor(m_playerTwoColor);
+            painter.setPen(pen);
+            painter.drawEllipse(rect);
+            break;
+        }
+        default:
+        {
+            // Сюда вообще не должны попадать.
+            assert(false);
+            break;
+        }
+    }
 }

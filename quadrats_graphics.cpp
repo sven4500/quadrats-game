@@ -4,26 +4,34 @@ void CQuadrats::paintEvent(QPaintEvent* event)
 {
     Q_UNUSED(event);
 
-    // инициализируем устройство рисования и очищем рабочу область перед рисовнием кадра
+    // Инициализируем устройство рисования и очищем рабочу область перед рисовнием нового кадра.
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
     painter.fillRect(0, 0, width(), height(), sm_backgroundColor);
 
-    // заполняет цветом вершинные квадраты
+    // Заполняет цветом квадраты на вершинах.
+    painter.save();
     paintCorner(painter);
+    painter.restore();
 
-    // подсвечиваем активный квадрат
+    // Подсвечиваем квадрат на который указывает указатель.
+    painter.save();
     paintCurrentQuadrat(painter);
+    painter.restore();
 
-    // рисуем сетку в центре окна
+    // Рисуем сетку на всей рабочей области.
+    painter.save();
     paintBackground(painter);
+    painter.restore();
 
-    // сисуем границы игрового поля
-    paintBorder(painter);
-
-    // рисуем текущую линию
+    // Рисуем текущую линию.
+    painter.save();
     paintCurrentLine(painter);
+    painter.restore();
+
+    // Выделяем границы игрового поля.
+    painter.save();
+    paintBorder(painter);
+    painter.restore();
 }
 
 void CQuadrats::paintBackground(QPainter& painter)const
@@ -149,20 +157,20 @@ void CQuadrats::paintCurrentLine(QPainter& painter)const
     switch(line.orient)
     {
     case LINE::Left:
-        painter.drawLine(line.pos.x * oneSize, line.pos.y * oneSize,
-            line.pos.x * oneSize, (line.pos.y + 1) * oneSize);
+        painter.drawLine(line.quadrat.x * oneSize, line.quadrat.y * oneSize,
+            line.quadrat.x * oneSize, (line.quadrat.y + 1) * oneSize);
         break;
     case LINE::Up:
-        painter.drawLine(line.pos.x * oneSize, line.pos.y * oneSize,
-            (line.pos.x + 1) * oneSize, line.pos.y * oneSize);
+        painter.drawLine(line.quadrat.x * oneSize, line.quadrat.y * oneSize,
+            (line.quadrat.x + 1) * oneSize, line.quadrat.y * oneSize);
         break;
     case LINE::Right:
-        painter.drawLine((line.pos.x + 1) * oneSize, line.pos.y * oneSize,
-            (line.pos.x + 1) * oneSize, (line.pos.y + 1) * oneSize);
+        painter.drawLine((line.quadrat.x + 1) * oneSize, line.quadrat.y * oneSize,
+            (line.quadrat.x + 1) * oneSize, (line.quadrat.y + 1) * oneSize);
         break;
     case LINE::Down:
-        painter.drawLine(line.pos.x * oneSize, (line.pos.y + 1) * oneSize,
-            (line.pos.x + 1) * oneSize, (line.pos.y + 1) * oneSize);
+        painter.drawLine(line.quadrat.x * oneSize, (line.quadrat.y + 1) * oneSize,
+            (line.quadrat.x + 1) * oneSize, (line.quadrat.y + 1) * oneSize);
         break;
     default:
         break;
@@ -210,6 +218,9 @@ void CQuadrats::markQuadrat(QPainter& painter, QUADRAT const& quadrat, Player co
 
     QRect const rect(quadrat.x * oneSize + margin, quadrat.y * oneSize + margin,
                      oneSize - margin2, oneSize - margin2);
+
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
 
     switch(player)
     {

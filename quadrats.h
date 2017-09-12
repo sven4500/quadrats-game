@@ -29,24 +29,27 @@ private:
 
     struct QUADRAT
     {
-        QUADRAT(): x(0), y(0)
+        // Система отсчёта квадратов. Относительно левого верхнего угла (Global),
+        // либо относительно центра игрового поля (Local).
+        enum Origin{Local = 0, Global = 1};
+
+        QUADRAT(): origin(Global), x(0), y(0)
         {}
 
-        QUADRAT(int x, int y): x(x), y(y)
+        QUADRAT(int x, int y, Origin origin = Global): origin(origin), x(x), y(y)
         {}
 
-        bool isValid()const
+        bool isLocal()const
         {
-            return true;
+            return (origin == Origin::Local) ? true : false;
         }
 
-//        QUADRAT& operator+(int val)
-//        {
-//            x += val;
-//            y += val;
-//            return *this;
-//        }
+        bool isGlobal()const
+        {
+            return (origin == Origin::Global) ? true : false;
+        }
 
+        Origin origin;
         int x:16;
         int y:16;
     };
@@ -58,23 +61,23 @@ private:
 
         LINE(): orient(Unknown)
         {
-            pos.x = -1;
-            pos.y = -1;
+            quadrat.x = -1;
+            quadrat.y = -1;
         }
 
         LINE(int x, int y, Orientation orientation): orient(orientation)
         {
-            pos.x = x;
-            pos.y = y;
+            quadrat.x = x;
+            quadrat.y = y;
         }
 
         bool isValid()const
         {
-            return orient != Unknown && pos.isValid() == true;
+            return orient != Unknown;
         }
 
         Orientation orient; // какая сторона квадрата
-        QUADRAT pos; // какой квадрат
+        QUADRAT quadrat; // какой квадрат
     };
 
     // структура хранит ходы одного игрока
@@ -122,11 +125,11 @@ private:
 
     // возврщает индекс квадрата в глобальной системе координат (относительно левого верхнего угла)
     QUADRAT getQuadrat(int x, int y)const;
-//    QUADRAT translateQuadrat(QUADRAT const& quadrat)const;
+    QUADRAT translateQuadrat(QUADRAT const& quadrat)const;
 
     // возврщает линию квадрата в глобальной системе координат (относительно левого верхнего угла)
     LINE getLine(int x, int y)const;
-//    LINE translateLine(LINE line)const;
+    LINE translateLine(LINE const& line)const;
 
     PLAYER_STATS m_stats[2];
     unsigned int m_dimFull; // размер игрового поля с учётом отступов

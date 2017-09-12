@@ -53,6 +53,31 @@ CQuadrats::QUADRAT CQuadrats::getQuadrat(int x, int y)const
     return QUADRAT(x / oneSize, y / oneSize);
 }
 
+CQuadrats::QUADRAT CQuadrats::translateQuadrat(QUADRAT const& quadrat)const
+{
+    QUADRAT const q1 = getQuadrat(width() / 2, height() / 2);
+    QUADRAT q2 = quadrat;
+
+    switch(quadrat.origin)
+    {
+    case QUADRAT::Origin::Local:
+        q2.origin = QUADRAT::Origin::Global;
+        q2.x += q1.x;
+        q2.y += q1.y;
+        break;
+    case QUADRAT::Origin::Global:
+        q2.origin = QUADRAT::Origin::Local;
+        q2.x -= q1.x;
+        q2.y -= q1.y;
+        break;
+    default:
+        assert(false);
+        break;
+    }
+
+    return q2;
+}
+
 CQuadrats::LINE CQuadrats::getLine(int x, int y)const
 {
     unsigned int const oneSize = getOneSize();
@@ -86,7 +111,7 @@ CQuadrats::LINE CQuadrats::getLine(int x, int y)const
 
     LINE line;
 
-    line.pos = getQuadrat(x, y);
+    line.quadrat = getQuadrat(x, y);
 
     switch(orientation)
     {
@@ -112,38 +137,12 @@ CQuadrats::LINE CQuadrats::getLine(int x, int y)const
     return line;
 }
 
-//CQuadrats::LINE CQuadrats::translateLine(LINE line)const
-//{
-//    if(line.isValid() == true)
-//    {
-//        unsigned int const oneSize = getOneSize();
-//        unsigned int const horzLineCount = height() / oneSize;
-//        unsigned int const vertLineCount = width() / oneSize;
-
-//        if(vertLineCount > m_dimFull)
-//        {
-//            line.pos.x -= (vertLineCount - m_dimFull) / 2;
-//        }
-
-//        if(horzLineCount > m_dimFull)
-//        {
-//            line.pos.y -= (horzLineCount - m_dimFull) / 2;
-//        }
-
-//        if(line.pos.x < 0 || line.pos.y < 0 || line.pos.x >= (int)m_dimFull || line.pos.y >= (int)m_dimFull)
-//        {
-//            line.pos.x = 0;
-//            line.pos.y = 0;
-//            line.orient = LINE::Unknown;
-//        }
-
-//        return line;
-//    }
-//    else
-//    {
-//        return LINE();
-//    }
-//}
+CQuadrats::LINE CQuadrats::translateLine(LINE const& line)const
+{
+    LINE l = line;
+    l.quadrat = translateQuadrat(l.quadrat);
+    return l;
+}
 
 void CQuadrats::mouseMoveEvent(QMouseEvent* event)
 {
@@ -161,8 +160,11 @@ void CQuadrats::mousePressEvent(QMouseEvent* event)
     Q_UNUSED(event);
 
     #ifdef _DEBUG
-    QUADRAT const quadrat = getQuadrat(m_x, m_y);
-    qDebug() << quadrat.x << quadrat.y << '\n';
+    QUADRAT quadrat;
+    quadrat = getQuadrat(m_x, m_y);
+    qDebug() << quadrat.x << quadrat.y << "\n";
+    quadrat = translateQuadrat(quadrat);
+    qDebug() << quadrat.x << quadrat.y << "\n\n";
 //    LINE line;
 //    line = getGlobalLine(m_x, m_y);
 //    qDebug() << line.pos.x << line.pos.y << line.orient;

@@ -11,6 +11,7 @@
 #include <QMouseEvent>
 #include <QMenuBar>
 #include <QDebug>
+#include <QTimer>
 #include <cassert>
 
 class CQuadrats : public QMainWindow
@@ -146,6 +147,8 @@ private:
     // Проверяет находится ли квадрат внутри игрового поля.
     bool isInside(QUADRAT const& quadrat)const;
     bool isInside(LINE const& line)const;
+
+    QTimer* m_timer;
 
     PLAYER_STATS m_stats[2];
     unsigned int m_dimFull; // размер игрового поля с учётом отступов

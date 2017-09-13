@@ -33,11 +33,16 @@ CQuadrats::CQuadrats(QWidget* parent): QMainWindow(parent)
     #else
     setWindowTitle("Квадраты (версия 0.19)");
     #endif
+
+    // Создаём таймер который раз в 35 мс будет вызывать метод для обновления рабочей области окна.
+    m_timer = new QTimer(this);
+    connect(m_timer, &QTimer::timeout, this, static_cast<void (QWidget::*)()>(&QWidget::update));
+    m_timer->start(35);
 }
 
 CQuadrats::~CQuadrats()
 {
-
+    m_timer->stop();
 }
 
 unsigned int CQuadrats::getOneSize()const
@@ -159,12 +164,9 @@ bool CQuadrats::isInside(LINE const& line)const
 
 void CQuadrats::mouseMoveEvent(QMouseEvent* event)
 {
-    // сохранили последние координаты указателя
+    // Сохранили последние координаты указателя мыши.
     m_x = event->x();
     m_y = event->y();
-
-    // перерисовываем рабочую область
-    update();
 }
 
 // Здесь будет сосредоточена основная логика игры.
@@ -178,12 +180,6 @@ void CQuadrats::mousePressEvent(QMouseEvent* event)
     qDebug() << quadrat.x << quadrat.y << "\n";
     quadrat = translateQuadrat(quadrat);
     qDebug() << quadrat.x << quadrat.y << "\n\n";
-//    LINE line;
-//    line = getGlobalLine(m_x, m_y);
-//    qDebug() << line.pos.x << line.pos.y << line.orient;
-//    line = translateLine(line);
-//    qDebug() << line.pos.x << line.pos.y << line.orient;
-//    qDebug() << '\n';
     #endif
 }
 
@@ -209,5 +205,4 @@ void CQuadrats::wheelEvent(QWheelEvent* event)
     }
 
     event->accept();
-    update();
 }

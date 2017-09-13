@@ -79,7 +79,7 @@ void CQuadrats::paintBackground(QPainter& painter)const
 
 void CQuadrats::paintBorder(QPainter& painter)const
 {
-//    assert(m_dimFull > 0);
+//    assert(m_dimFull >= m_dim && m_dim != 0);
 
     // размер одного квадрата в пикселях
     unsigned int const oneSize = getOneSize();
@@ -139,49 +139,17 @@ void CQuadrats::paintCurrentQuadrat(QPainter& painter)const
 
     if(isInside(quadrat) == true)
     {
-        fillQuadrat(painter, quadrat, QColor(190, 190, 190, 190));
-//        markQuadrat(painter, quadrat, PlayerOne);
+        drawQuadrat(painter, quadrat, QColor(190, 190, 190, 190));
     }
 }
 
 void CQuadrats::paintCurrentLine(QPainter& painter)const
 {
-    // размер одного квадрата в пикселях
-    unsigned int const oneSize = std::min(width(), height()) / m_dimFull;
-
     LINE const line = getLine(m_x, m_y);
 
-    if(isInside(line.quadrat) == true)
+    if(isInside(line) == true)
     {
-        {
-            QPen pen;
-            pen.setColor(sm_activeLineColor);
-            pen.setWidth(2);
-
-            painter.setPen(pen);
-        }
-
-        switch(line.orient)
-        {
-        case LINE::Left:
-            painter.drawLine(line.quadrat.x * oneSize, line.quadrat.y * oneSize,
-                line.quadrat.x * oneSize, (line.quadrat.y + 1) * oneSize);
-            break;
-        case LINE::Up:
-            painter.drawLine(line.quadrat.x * oneSize, line.quadrat.y * oneSize,
-                (line.quadrat.x + 1) * oneSize, line.quadrat.y * oneSize);
-            break;
-        case LINE::Right:
-            painter.drawLine((line.quadrat.x + 1) * oneSize, line.quadrat.y * oneSize,
-                (line.quadrat.x + 1) * oneSize, (line.quadrat.y + 1) * oneSize);
-            break;
-        case LINE::Down:
-            painter.drawLine(line.quadrat.x * oneSize, (line.quadrat.y + 1) * oneSize,
-                (line.quadrat.x + 1) * oneSize, (line.quadrat.y + 1) * oneSize);
-            break;
-        default:
-            break;
-        };
+        drawLine(painter, line, sm_activeLineColor);
     }
 }
 
@@ -206,10 +174,10 @@ void CQuadrats::paintCorner(QPainter& painter)const
         quadrats[3].y += dim2;
     }
 
-    fillQuadrat(painter, quadrats[0], m_playerOneColor);
-    fillQuadrat(painter, quadrats[1], m_playerOneColor);
-    fillQuadrat(painter, quadrats[2], m_playerTwoColor);
-    fillQuadrat(painter, quadrats[3], m_playerTwoColor);
+    drawQuadrat(painter, quadrats[0], m_playerOneColor);
+    drawQuadrat(painter, quadrats[1], m_playerOneColor);
+    drawQuadrat(painter, quadrats[2], m_playerTwoColor);
+    drawQuadrat(painter, quadrats[3], m_playerTwoColor);
 }
 
 // Отрисовывает захваченные игроками квадраты.
@@ -218,50 +186,111 @@ void CQuadrats::paintCaptured(QPainter& painter)const
     Q_UNUSED(painter);
 }
 
-void CQuadrats::fillQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const
+void CQuadrats::drawQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const
 {
+    // Если квдрат в локальных координатах тогда сперва преобразуем в глобальные.
+    QUADRAT const q = (quadrat.isLocal() == true) ? translateQuadrat(quadrat) : quadrat;
+
     unsigned int const oneSize = getOneSize();
-    painter.fillRect(quadrat.x * oneSize, quadrat.y * oneSize, oneSize, oneSize, color);
+
+    painter.fillRect(q.x * oneSize, q.y * oneSize, oneSize, oneSize, color);
 }
 
-void CQuadrats::markQuadrat(QPainter& painter, QUADRAT const& quadrat, Player const& player)const
+void CQuadrats::drawLine(QPainter& painter, LINE const& line, QColor const& color)const
+{
+    // Если линия в локальных координатах то преобразуем в глобальные.
+    LINE const l = (line.isLocal() == true) ? translateLine(line) : line;
+
+    unsigned int const oneSize = getOneSize();
+
+    // Устанавливаем столь рисования.
+    {
+        QPen pen;
+        pen.setColor(color);
+        pen.setWidth(2);
+
+        painter.setPen(pen);
+        painter.setBrush(Qt::NoBrush);
+    }
+
+    switch(l.orient)
+    {
+    case LINE::Left:
+        painter.drawLine(l.quadrat.x * oneSize, l.quadrat.y * oneSize,
+            l.quadrat.x * oneSize, (l.quadrat.y + 1) * oneSize);
+        break;
+
+    case LINE::Up:
+        painter.drawLine(l.quadrat.x * oneSize, l.quadrat.y * oneSize,
+            (l.quadrat.x + 1) * oneSize, l.quadrat.y * oneSize);
+        break;
+
+    case LINE::Right:
+        painter.drawLine((l.quadrat.x + 1) * oneSize, l.quadrat.y * oneSize,
+            (l.quadrat.x + 1) * oneSize, (l.quadrat.y + 1) * oneSize);
+        break;
+
+    case LINE::Down:
+        painter.drawLine(l.quadrat.x * oneSize, (l.quadrat.y + 1) * oneSize,
+            (l.quadrat.x + 1) * oneSize, (l.quadrat.y + 1) * oneSize);
+        break;
+
+    default:
+        // Сюда в принципе никогда не должны попасть.
+        assert(false);
+        break;
+    };
+}
+
+void CQuadrats::drawCross(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const
 {
     unsigned int const oneSize = getOneSize();
+
     unsigned int const margin = oneSize * 0.25;
-    unsigned int const margin2 = margin * 2;
+    unsigned int const size = oneSize - margin * 2;
 
-    QRect const rect(quadrat.x * oneSize + margin, quadrat.y * oneSize + margin,
-                     oneSize - margin2, oneSize - margin2);
+    // Вычисляем квадрат внутри основного квадрата где можно рисовать.
+    QRect const rect(quadrat.x * oneSize + margin + 1, quadrat.y * oneSize + margin + 1, size, size);
 
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
-
-    switch(player)
+    // Устанавливаем стиль отрисовки.
     {
-        case Player::PlayerOne:
-        {
-            QPen pen;
-            pen.setWidth(2);
-            pen.setColor(m_playerOneColor);
-            painter.setPen(pen);
-            painter.drawLine(rect.left(), rect.top(), rect.right(), rect.bottom());
-            painter.drawLine(rect.left(), rect.bottom(), rect.right(), rect.top());
-            break;
-        }
-        case Player::PlayerTwo:
-        {
-            QPen pen;
-            pen.setWidth(2);
-            pen.setColor(m_playerTwoColor);
-            painter.setPen(pen);
-            painter.drawEllipse(rect);
-            break;
-        }
-        default:
-        {
-            // Сюда вообще не должны попадать.
-            assert(false);
-            break;
-        }
+        QPen pen;
+        pen.setWidth(2);
+        pen.setColor(color);
+
+        painter.setPen(pen);
+        painter.setBrush(Qt::NoBrush);
+
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
     }
+
+    painter.drawLine(rect.left(), rect.top(), rect.right(), rect.bottom());
+    painter.drawLine(rect.left(), rect.bottom(), rect.right(), rect.top());
+}
+
+void CQuadrats::drawCircle(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const
+{
+    unsigned int const oneSize = getOneSize();
+
+    unsigned int const margin = oneSize * 0.25;
+    unsigned int const size = oneSize - margin * 2;
+
+    // Вычисляем квадрат внутри основного квадрата где можно рисовать.
+    QRect const rect(quadrat.x * oneSize + margin + 1, quadrat.y * oneSize + margin + 1, size - 1, size - 1);
+
+    // Устанавливаем стиль отрисовки.
+    {
+        QPen pen;
+        pen.setWidth(2);
+        pen.setColor(color);
+
+        painter.setPen(pen);
+        painter.setBrush(Qt::NoBrush);
+
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
+    }
+
+    painter.drawEllipse(rect);
 }

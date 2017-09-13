@@ -76,6 +76,16 @@ private:
             return orient != Unknown;
         }
 
+        bool isLocal()const
+        {
+            return quadrat.isLocal();
+        }
+
+        bool isGlobal()const
+        {
+            return quadrat.isGlobal();
+        }
+
         Orientation orient; // какая сторона квадрата
         QUADRAT quadrat; // какой квадрат
     };
@@ -120,11 +130,10 @@ private:
     void paintCaptured(QPainter& painter)const;
 
     // заполянет один квадрат заданным цветом
-    void fillQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const;
-//    void fillQuadratCaptured(QPainter& painter, QUADRAT const& quadrat, unsigned int player)const;
-
-    // Рисует внутри квадрата пиктограмму игрока.
-    void markQuadrat(QPainter& painter, QUADRAT const& quadrat, Player const& player)const;
+    void drawQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const;
+    void drawLine(QPainter& painter, LINE const& line, QColor const& color)const;
+    void drawCross(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const;
+    void drawCircle(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const;
 
     // Возврщает индекс квадрата в глобальной системе координат (относительно левого верхнего угла).
     QUADRAT getQuadrat(int x, int y)const;
@@ -136,6 +145,7 @@ private:
 
     // Проверяет находится ли квадрат внутри игрового поля.
     bool isInside(QUADRAT const& quadrat)const;
+    bool isInside(LINE const& line)const;
 
     PLAYER_STATS m_stats[2];
     unsigned int m_dimFull; // размер игрового поля с учётом отступов

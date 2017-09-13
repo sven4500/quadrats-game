@@ -10,7 +10,7 @@ CQuadrats::CQuadrats(QWidget* parent): QMainWindow(parent)
     m_playerOneColor = QColor(0, 162, 232);
     m_playerTwoColor = QColor(237, 28, 36);
 
-    m_dimFull = 19; // сетка по-умолчанию
+    m_dimFull = 13; // сетка по-умолчанию
     m_dim = 9;
 
     m_stats[0].playerColor = m_playerOneColor;
@@ -149,7 +149,12 @@ bool CQuadrats::isInside(QUADRAT const& quadrat)const
     // Если квадрат изначально в глобальных координатах, то сперва преобразуем в локальные.
     QUADRAT const q = (quadrat.isGlobal() == true) ? translateQuadrat(quadrat) : quadrat;
     unsigned int const dim2 = m_dim / 2;
-    return std::abs(q.x) + std::abs(q.y) <= dim2;
+    return (unsigned int)std::abs(q.x) + (unsigned int)std::abs(q.y) <= dim2;
+}
+
+bool CQuadrats::isInside(LINE const& line)const
+{
+    return isInside(line.quadrat);
 }
 
 void CQuadrats::mouseMoveEvent(QMouseEvent* event)

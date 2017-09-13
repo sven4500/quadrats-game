@@ -8,7 +8,8 @@ void CQuadrats::paintEvent(QPaintEvent* event)
     QPainter painter(this);
     painter.fillRect(0, 0, width(), height(), sm_backgroundColor);
 
-    // Заполняет цветом квадраты на вершинах.
+    // Заполняет цветом квадраты на вершинах (нужно будет скоро избавиться и
+    // просто добавлять каждому игроку изначально по два квадрата).
     painter.save();
     paintCorner(painter);
     painter.restore();
@@ -78,7 +79,7 @@ void CQuadrats::paintBackground(QPainter& painter)const
 
 void CQuadrats::paintBorder(QPainter& painter)const
 {
-    assert(m_dimFull > 0);
+//    assert(m_dimFull > 0);
 
     // размер одного квадрата в пикселях
     unsigned int const oneSize = getOneSize();
@@ -102,7 +103,6 @@ void CQuadrats::paintBorder(QPainter& painter)const
         painter.setPen(pen);
     }
 
-    // рисуем все горизонтальные линии
     for(unsigned int i = 0; i <= dim2; ++i)
     {
         unsigned int const x[4] = {
@@ -136,8 +136,12 @@ void CQuadrats::paintBorder(QPainter& painter)const
 void CQuadrats::paintCurrentQuadrat(QPainter& painter)const
 {
     QUADRAT const quadrat = getQuadrat(m_x, m_y);
-    fillQuadrat(painter, quadrat, QColor(190, 190, 190, 190));
-//    markQuadrat(painter, quadrat, PlayerOne);
+
+    if(isInside(quadrat) == true)
+    {
+        fillQuadrat(painter, quadrat, QColor(190, 190, 190, 190));
+//        markQuadrat(painter, quadrat, PlayerOne);
+    }
 }
 
 void CQuadrats::paintCurrentLine(QPainter& painter)const
@@ -147,34 +151,38 @@ void CQuadrats::paintCurrentLine(QPainter& painter)const
 
     LINE const line = getLine(m_x, m_y);
 
+    if(isInside(line.quadrat) == true)
     {
-        QPen pen;
-        pen.setColor(sm_activeLineColor);
-        pen.setWidth(2);
-        painter.setPen(pen);
-    }
+        {
+            QPen pen;
+            pen.setColor(sm_activeLineColor);
+            pen.setWidth(2);
 
-    switch(line.orient)
-    {
-    case LINE::Left:
-        painter.drawLine(line.quadrat.x * oneSize, line.quadrat.y * oneSize,
-            line.quadrat.x * oneSize, (line.quadrat.y + 1) * oneSize);
-        break;
-    case LINE::Up:
-        painter.drawLine(line.quadrat.x * oneSize, line.quadrat.y * oneSize,
-            (line.quadrat.x + 1) * oneSize, line.quadrat.y * oneSize);
-        break;
-    case LINE::Right:
-        painter.drawLine((line.quadrat.x + 1) * oneSize, line.quadrat.y * oneSize,
-            (line.quadrat.x + 1) * oneSize, (line.quadrat.y + 1) * oneSize);
-        break;
-    case LINE::Down:
-        painter.drawLine(line.quadrat.x * oneSize, (line.quadrat.y + 1) * oneSize,
-            (line.quadrat.x + 1) * oneSize, (line.quadrat.y + 1) * oneSize);
-        break;
-    default:
-        break;
-    };
+            painter.setPen(pen);
+        }
+
+        switch(line.orient)
+        {
+        case LINE::Left:
+            painter.drawLine(line.quadrat.x * oneSize, line.quadrat.y * oneSize,
+                line.quadrat.x * oneSize, (line.quadrat.y + 1) * oneSize);
+            break;
+        case LINE::Up:
+            painter.drawLine(line.quadrat.x * oneSize, line.quadrat.y * oneSize,
+                (line.quadrat.x + 1) * oneSize, line.quadrat.y * oneSize);
+            break;
+        case LINE::Right:
+            painter.drawLine((line.quadrat.x + 1) * oneSize, line.quadrat.y * oneSize,
+                (line.quadrat.x + 1) * oneSize, (line.quadrat.y + 1) * oneSize);
+            break;
+        case LINE::Down:
+            painter.drawLine(line.quadrat.x * oneSize, (line.quadrat.y + 1) * oneSize,
+                (line.quadrat.x + 1) * oneSize, (line.quadrat.y + 1) * oneSize);
+            break;
+        default:
+            break;
+        };
+    }
 }
 
 void CQuadrats::paintCorner(QPainter& painter)const
@@ -202,6 +210,12 @@ void CQuadrats::paintCorner(QPainter& painter)const
     fillQuadrat(painter, quadrats[1], m_playerOneColor);
     fillQuadrat(painter, quadrats[2], m_playerTwoColor);
     fillQuadrat(painter, quadrats[3], m_playerTwoColor);
+}
+
+// Отрисовывает захваченные игроками квадраты.
+void CQuadrats::paintCaptured(QPainter& painter)const
+{
+    Q_UNUSED(painter);
 }
 
 void CQuadrats::fillQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const

@@ -84,6 +84,7 @@ private:
     struct PLAYER_STATS
     {
         QVector<LINE> lines;
+        QVector<QUADRAT> captured;
         QColor playerColor;
     };
 
@@ -107,6 +108,7 @@ private:
     virtual void mouseMoveEvent(QMouseEvent* event);
     virtual void mousePressEvent(QMouseEvent* event);
     //virtual void mouseReleaseEvent(QMouseEvent* event);
+    virtual void wheelEvent(QWheelEvent* event);
 
     unsigned int getOneSize()const; // возвращает рзмер одного квдрт в пикселях
 
@@ -114,7 +116,8 @@ private:
     void paintBorder(QPainter& painter)const;
     void paintCurrentQuadrat(QPainter& painter)const;
     void paintCurrentLine(QPainter& painter)const;
-    void paintCorner(QPainter& painter)const;
+    void paintCorner(QPainter& painter)const; // <= исчезнет после paintCaptured (просто добавляем по два поля каждому).
+    void paintCaptured(QPainter& painter)const;
 
     // заполянет один квадрат заданным цветом
     void fillQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const;
@@ -123,13 +126,16 @@ private:
     // Рисует внутри квадрата пиктограмму игрока.
     void markQuadrat(QPainter& painter, QUADRAT const& quadrat, Player const& player)const;
 
-    // возврщает индекс квадрата в глобальной системе координат (относительно левого верхнего угла)
+    // Возврщает индекс квадрата в глобальной системе координат (относительно левого верхнего угла).
     QUADRAT getQuadrat(int x, int y)const;
     QUADRAT translateQuadrat(QUADRAT const& quadrat)const;
 
-    // возврщает линию квадрата в глобальной системе координат (относительно левого верхнего угла)
+    // Возврщает линию квадрата в глобальной системе координат (относительно левого верхнего угла).
     LINE getLine(int x, int y)const;
     LINE translateLine(LINE const& line)const;
+
+    // Проверяет находится ли квадрат внутри игрового поля.
+    bool isInside(QUADRAT const& quadrat)const;
 
     PLAYER_STATS m_stats[2];
     unsigned int m_dimFull; // размер игрового поля с учётом отступов

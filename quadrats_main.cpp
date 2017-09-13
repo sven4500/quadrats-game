@@ -10,7 +10,7 @@ CQuadrats::CQuadrats(QWidget* parent): QMainWindow(parent)
     m_playerOneColor = QColor(0, 162, 232);
     m_playerTwoColor = QColor(237, 28, 36);
 
-    m_dimFull = 13; // сетка по-умолчанию
+    m_dimFull = 19; // сетка по-умолчанию
     m_dim = 9;
 
     m_stats[0].playerColor = m_playerOneColor;
@@ -29,9 +29,9 @@ CQuadrats::CQuadrats(QWidget* parent): QMainWindow(parent)
     setMouseTracking(true);
 
     #ifdef _DEBUG
-    setWindowTitle("Квадраты (версия 0.15 отладка)");
+    setWindowTitle("Квадраты (версия 0.19 отладка)");
     #else
-    setWindowTitle("Квадраты (версия 0.15)");
+    setWindowTitle("Квадраты (версия 0.19)");
     #endif
 }
 
@@ -144,6 +144,14 @@ CQuadrats::LINE CQuadrats::translateLine(LINE const& line)const
     return l;
 }
 
+bool CQuadrats::isInside(QUADRAT const& quadrat)const
+{
+    // Если квадрат изначально в глобальных координатах, то сперва преобразуем в локальные.
+    QUADRAT const q = (quadrat.isGlobal() == true) ? translateQuadrat(quadrat) : quadrat;
+    unsigned int const dim2 = m_dim / 2;
+    return std::abs(q.x) + std::abs(q.y) <= dim2;
+}
+
 void CQuadrats::mouseMoveEvent(QMouseEvent* event)
 {
     // сохранили последние координаты указателя
@@ -172,4 +180,29 @@ void CQuadrats::mousePressEvent(QMouseEvent* event)
 //    qDebug() << line.pos.x << line.pos.y << line.orient;
 //    qDebug() << '\n';
     #endif
+}
+
+void CQuadrats::wheelEvent(QWheelEvent* event)
+{
+    assert(m_dimFull >= m_dim);
+
+    QPoint const angle = event->angleDelta();
+
+    if(angle.y() > 0)
+    {
+        if(m_dimFull > m_dim)
+        {
+            --m_dimFull;
+        }
+    }
+    else if(angle.y() < 0)
+    {
+        if(m_dimFull < m_dim * 2)
+        {
+            ++m_dimFull;
+        }
+    }
+
+    event->accept();
+    update();
 }

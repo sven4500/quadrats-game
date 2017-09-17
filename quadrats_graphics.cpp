@@ -10,9 +10,9 @@ void CQuadrats::paintEvent(QPaintEvent* event)
 
     // Заполняет цветом квадраты на вершинах (нужно будет скоро избавиться и
     // просто добавлять каждому игроку изначально по два квадрата).
-    painter.save();
-    paintCorner(painter);
-    painter.restore();
+//    painter.save();
+//    paintCorner(painter);
+//    painter.restore();
 
     // Подсвечиваем квадрат на который указывает указатель.
     painter.save();
@@ -24,14 +24,14 @@ void CQuadrats::paintEvent(QPaintEvent* event)
     paintBackground(painter);
     painter.restore();
 
-    // Рисуем текущую линию.
-    painter.save();
-    paintCurrentLine(painter);
-    painter.restore();
-
     // Выделяем границы игрового поля.
     painter.save();
     paintBorder(painter);
+    painter.restore();
+
+    // Рисуем текущую линию.
+    painter.save();
+    paintCurrentLine(painter);
     painter.restore();
 }
 
@@ -202,8 +202,10 @@ void CQuadrats::drawLine(QPainter& painter, LINE const& line, QColor const& colo
     LINE const l = (line.isLocal() == true) ? translateLine(line) : line;
 
     unsigned int const oneSize = getOneSize();
+    unsigned int const ix = l.x * oneSize;
+    unsigned int const iy = l.y * oneSize;
 
-    // Устанавливаем столь рисования.
+    // Устанавливаем стиль рисования.
     {
         QPen pen;
         pen.setColor(color);
@@ -213,30 +215,17 @@ void CQuadrats::drawLine(QPainter& painter, LINE const& line, QColor const& colo
         painter.setBrush(Qt::NoBrush);
     }
 
-    switch(l.orient)
+    switch(l.orientation)
     {
-    case LINE::Left:
-        painter.drawLine(l.quadrat.x * oneSize, l.quadrat.y * oneSize,
-            l.quadrat.x * oneSize, (l.quadrat.y + 1) * oneSize);
+    case LINE::Horizontal:
+        painter.drawLine(ix, iy, ix + oneSize, iy);
         break;
 
-    case LINE::Up:
-        painter.drawLine(l.quadrat.x * oneSize, l.quadrat.y * oneSize,
-            (l.quadrat.x + 1) * oneSize, l.quadrat.y * oneSize);
-        break;
-
-    case LINE::Right:
-        painter.drawLine((l.quadrat.x + 1) * oneSize, l.quadrat.y * oneSize,
-            (l.quadrat.x + 1) * oneSize, (l.quadrat.y + 1) * oneSize);
-        break;
-
-    case LINE::Down:
-        painter.drawLine(l.quadrat.x * oneSize, (l.quadrat.y + 1) * oneSize,
-            (l.quadrat.x + 1) * oneSize, (l.quadrat.y + 1) * oneSize);
+    case LINE::Vertical:
+        painter.drawLine(ix, iy, ix, iy + oneSize);
         break;
 
     default:
-        // Сюда в принципе никогда не должны попасть.
         assert(false);
         break;
     };

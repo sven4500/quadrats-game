@@ -10,7 +10,7 @@ CQuadrats::CQuadrats(QWidget* parent): QMainWindow(parent)
     m_playerOneColor = QColor(0, 162, 232);
     m_playerTwoColor = QColor(237, 28, 36);
 
-    m_dimFull = 13; // сетка по-умолчанию
+    m_dimFull = 14; // сетка по-умолчанию
     m_dim = 9;
 
     m_stats[0].playerColor = m_playerOneColor;
@@ -67,13 +67,13 @@ CQuadrats::QUADRAT CQuadrats::translateQuadrat(QUADRAT const& quadrat)const
     {
     case QUADRAT::Origin::Local:
         q2.origin = QUADRAT::Origin::Global;
-        q2.x += q1.x;
-        q2.y += q1.y;
+        q2.x = q2.x + q1.x;
+        q2.y = q1.y - q2.y;
         break;
     case QUADRAT::Origin::Global:
         q2.origin = QUADRAT::Origin::Local;
-        q2.x -= q1.x;
-        q2.y -= q1.y;
+        q2.x = q2.x - q1.x;
+        q2.y = q1.y - q2.y;
         break;
     default:
         assert(false);
@@ -85,57 +85,56 @@ CQuadrats::QUADRAT CQuadrats::translateQuadrat(QUADRAT const& quadrat)const
 
 CQuadrats::LINE CQuadrats::getLine(int x, int y)const
 {
+    LINE line;
+    line.origin = LINE::Global;
+
     unsigned int const oneSize = getOneSize();
+    unsigned int const ix = x / oneSize;
+    unsigned int const iy = y / oneSize;
 
-    // расстояния от точки до четырёх границ квадрата
-    unsigned int dist[4] = {};
+    // Расстояния от точки до четырёх границ квадрата: левой, верхней, правой и нижней соответственно.
+    unsigned int const dist[4] = {
+        x % oneSize,
+        y % oneSize,
+        oneSize - dist[0],
+        oneSize - dist[1]
+    };
 
-    // ситаем расстояния до границ: левой, верхней, правой и нижней соответственно
-    dist[0] = x % oneSize;
-    dist[1] = y % oneSize;
-    dist[2] = oneSize - dist[0];
-    dist[3] = oneSize - dist[1];
+    unsigned int j = 0;
 
-    unsigned int orientation = 0;
-
-    // ищем границу с наименьшим расстоянием до точки
+    // Ищем границу с наименьшим расстоянием до точки.
+    for(unsigned int i = 1; i < 4; ++i)
     {
-        unsigned int d = dist[0];
-        orientation = 0;
-
-        // находим минимальное расстояние
-        for(unsigned int i = 1; i < 4; ++i)
+        if(dist[i] < dist[j])
         {
-            if(dist[i] < d)
-            {
-                orientation = i;
-                d = dist[i];
-            }
+            j = i;
         }
     }
 
-    LINE line;
-
-    line.quadrat = getQuadrat(x, y);
-
-    switch(orientation)
+    switch(j)
     {
     case 0:
-        line.orient = LINE::Left;
+        line.orientation = LINE::Vertical;
+        line.x = ix;
+        line.y = iy;
         break;
     case 1:
-        line.orient = LINE::Up;
+        line.orientation = LINE::Horizontal;
+        line.x = ix;
+        line.y = iy;
         break;
     case 2:
-        line.orient = LINE::Right;
+        line.orientation = LINE::Vertical;
+        line.x = ix + 1;
+        line.y = iy;
         break;
     case 3:
-        line.orient = LINE::Down;
+        line.orientation = LINE::Horizontal;
+        line.x = ix;
+        line.y = iy + 1;
         break;
     default:
-        // сюда не должны попадать в принципе
         assert(false);
-        line.orient = LINE::Unknown;
         break;
     }
 
@@ -144,9 +143,27 @@ CQuadrats::LINE CQuadrats::getLine(int x, int y)const
 
 CQuadrats::LINE CQuadrats::translateLine(LINE const& line)const
 {
-    LINE l = line;
-    l.quadrat = translateQuadrat(l.quadrat);
-    return l;
+    LINE const l1 = getLine(width() / 2, height() / 2);
+    LINE l2 = line;
+
+    switch(l2.origin)
+    {
+    case LINE::Origin::Local:
+        l2.origin = LINE::Origin::Global;
+        l2.x = l2.x + l1.x;
+        l2.y = l1.y - l2.y;
+        break;
+    case LINE::Origin::Global:
+        l2.origin = LINE::Origin::Local;
+        l2.x = l2.x - l1.x;
+        l2.y = l1.y - l2.y;
+        break;
+    default:
+        assert(false);
+        break;
+    }
+
+    return l2;
 }
 
 bool CQuadrats::isInside(QUADRAT const& quadrat)const
@@ -159,12 +176,49 @@ bool CQuadrats::isInside(QUADRAT const& quadrat)const
 
 bool CQuadrats::isInside(LINE const& line)const
 {
-    return isInside(line.quadrat);
+    LINE l = (line.isGlobal() == true) ? translateLine(line) : line;
+
+    unsigned int dim2 = m_dim / 2;
+
+    if(l.x <= 0 && l.y >= 0)
+    {
+        return (unsigned int)std::abs(l.x) + (unsigned int)std::abs(l.y) < dim2;
+    }
+    else if(l.x > 0 && l.y < 0)
+    {
+        return (unsigned int)std::abs(l.x) + (unsigned int)std::abs(l.y) <= dim2;
+    }
+    else if(l.x > 0 && l.y >= 0)
+    {
+        switch(l.orientation)
+        {
+        case LINE::Orientation::Horizontal:
+            return (unsigned int)std::abs(l.x) + (unsigned int)std::abs(l.y) < dim2;
+        case LINE::Orientation::Vertical:
+            return (unsigned int)std::abs(l.x) + (unsigned int)std::abs(l.y) <= dim2;
+        default:
+            return false;
+        }
+    }
+    else if(l.x <= 0 && l.y < 0)
+    {
+        switch(l.orientation)
+        {
+        case LINE::Orientation::Horizontal:
+            return (unsigned int)std::abs(l.x) + (unsigned int)std::abs(l.y) <= dim2;
+        case LINE::Orientation::Vertical:
+            return (unsigned int)std::abs(l.x) + (unsigned int)std::abs(l.y) < dim2;
+        default:
+            return false;
+        }
+    }
+
+    return false;
 }
 
 void CQuadrats::mouseMoveEvent(QMouseEvent* event)
 {
-    // Сохранили последние координаты указателя мыши.
+    // Сохраняем последние координаты указателя мыши.
     m_x = event->x();
     m_y = event->y();
 }
@@ -175,32 +229,41 @@ void CQuadrats::mousePressEvent(QMouseEvent* event)
     Q_UNUSED(event);
 
     #ifdef _DEBUG
-    QUADRAT quadrat;
-    quadrat = getQuadrat(m_x, m_y);
-    qDebug() << quadrat.x << quadrat.y << "\n";
-    quadrat = translateQuadrat(quadrat);
-    qDebug() << quadrat.x << quadrat.y << "\n\n";
+    LINE line;
+    line = getLine(m_x, m_y);
+    qDebug() << line.x << line.y << "\n";
+    line = translateLine(line);
+    qDebug() << line.x << line.y << "\n";
+    line = translateLine(line);
+    qDebug() << line.x << line.y << "\n\n";
     #endif
+}
+
+void CQuadrats::mouseReleaseEvent(QMouseEvent* event)
+{
+    Q_UNUSED(event);
 }
 
 void CQuadrats::wheelEvent(QWheelEvent* event)
 {
     assert(m_dimFull >= m_dim);
+    assert(m_dimFull % 2 == 0);
+    assert(m_dim % 2 == 1);
 
     QPoint const angle = event->angleDelta();
 
     if(angle.y() > 0)
     {
-        if(m_dimFull > m_dim)
+        if(m_dimFull > m_dim + 1)
         {
-            --m_dimFull;
+            m_dimFull -= 2;
         }
     }
     else if(angle.y() < 0)
     {
         if(m_dimFull < m_dim * 2)
         {
-            ++m_dimFull;
+            m_dimFull += 2;
         }
     }
 

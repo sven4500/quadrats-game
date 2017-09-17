@@ -26,69 +26,71 @@ public:
 
 private:
 
-    enum Player{PlayerOne = 0, PlayerTwo = 1};
-
+    // Структура хранит информацию о местоположении одного квадрата.
     struct QUADRAT
     {
-        // Система отсчёта квадратов. Относительно левого верхнего угла (Global),
-        // либо относительно центра игрового поля (Local).
-        enum Origin{Local = 0, Global = 1};
+        // Система отсчёта. Относительно левого верхнего угла (Global), либо относительно центра игрового поля (Local).
+        enum Origin{Local = 0, Global};
 
-        QUADRAT(): origin(Global), x(0), y(0)
-        {}
-
-        QUADRAT(int x, int y, Origin origin = Global): origin(origin), x(x), y(y)
-        {}
-
-        bool isLocal()const
+        QUADRAT():
+            origin(Global), x(0), y(0)
         {
-            return (origin == Origin::Local) ? true : false;
+
         }
 
-        bool isGlobal()const
+        QUADRAT(int x, int y, Origin origin = Global):
+            origin(origin), x(x), y(y)
         {
-            return (origin == Origin::Global) ? true : false;
+
         }
 
-        Origin origin;
-        int x:16;
-        int y:16;
+        inline bool isLocal()const
+        {
+            return origin == Local;
+        }
+
+        inline bool isGlobal()const
+        {
+            return origin == Global;
+        }
+
+        Origin origin;  // Система отсчёта: локальная или глобальная.
+        int x;          // Координата квадрата.
+        int y;          // Координата квадрата.
     };
 
-    // структура хранит информацию об отдельной линии
+    // Структура хранит информацию о местоположении одной линии.
     struct LINE
     {
-        enum Orientation{Unknown = -1, Left = 0, Up, Right, Down};
+        enum Origin{Local = 0, Global};
+        enum Orientation{Horizontal = 0, Vertical};
 
-        LINE(): orient(Unknown)
+        LINE():
+            origin(Global), orientation(Vertical), x(0), y(0)
         {
-            quadrat.x = -1;
-            quadrat.y = -1;
+
         }
 
-        LINE(int x, int y, Orientation orientation): orient(orientation)
+        LINE(int x, int y, Orientation orientation, Origin origin = Global):
+            origin(origin), orientation(orientation), x(x), y(y)
         {
-            quadrat.x = x;
-            quadrat.y = y;
+
         }
 
-        bool isValid()const
+        inline bool isLocal()const
         {
-            return orient != Unknown;
+            return origin == Local;
         }
 
-        bool isLocal()const
+        inline bool isGlobal()const
         {
-            return quadrat.isLocal();
+            return origin == Global;
         }
 
-        bool isGlobal()const
-        {
-            return quadrat.isGlobal();
-        }
-
-        Orientation orient; // какая сторона квадрата
-        QUADRAT quadrat; // какой квадрат
+        Origin origin;              // Система координат: локальная или глобальная.
+        Orientation orientation;    // Расположение линии: горизонтальное или вертикальное.
+        int x;                      // Координата линии.
+        int y;                      // Координата линии.
     };
 
     // структура хранит ходы одного игрока
@@ -118,7 +120,7 @@ private:
 
     virtual void mouseMoveEvent(QMouseEvent* event);
     virtual void mousePressEvent(QMouseEvent* event);
-    //virtual void mouseReleaseEvent(QMouseEvent* event);
+    virtual void mouseReleaseEvent(QMouseEvent* event);
     virtual void wheelEvent(QWheelEvent* event);
 
     unsigned int getOneSize()const; // возвращает рзмер одного квдрт в пикселях

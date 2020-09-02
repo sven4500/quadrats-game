@@ -144,32 +144,31 @@ LINE CQuadrats::getLine(int x, int y)const
     return line;
 }
 
-LINE CQuadrats::translateLine(LINE const& line)const
+LINE CQuadrats::translateLine(LINE const& inpLine)const
 {
-    //unsigned int const oneSize2 = getOneSize() / 2;
-    LINE const l1 = getLine(width() / 2, height() / 2);
-    LINE l2 = line;
+    QUADRAT const relQuad = getQuadrat(width() / 2, height() / 2);
+    LINE outLine = inpLine;
 
-    //qDebug() << width() << height() << l1.x << l1.y << "\n";
-
-    switch(l2.origin)
+    switch(outLine.origin)
     {
     case LINE::Origin::Local:
-        l2.origin = LINE::Origin::Global;
-        l2.x = l2.x + l1.x;
-        l2.y = l1.y - l2.y;
+        outLine.origin = LINE::Origin::Global;
+        outLine.x = outLine.x + relQuad.x;
+        outLine.y = relQuad.y - outLine.y;
         break;
+
     case LINE::Origin::Global:
-        l2.origin = LINE::Origin::Local;
-        l2.x = l2.x - l1.x;
-        l2.y = l1.y - l2.y;
+        outLine.origin = LINE::Origin::Local;
+        outLine.x = outLine.x - relQuad.x;
+        outLine.y = relQuad.y - outLine.y;
         break;
+
     default:
         assert(false);
         break;
     }
 
-    return l2;
+    return outLine;
 }
 
 bool CQuadrats::isInside(QUADRAT const& quadrat)const

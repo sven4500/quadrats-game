@@ -3,18 +3,18 @@
 #define LINE_H_
 
 // Структура хранит информацию о местоположении одной линии.
-struct LINE
+struct Line
 {
     enum Origin{Local = 0, Global};
     enum Orientation{Horizontal = 0, Vertical};
 
-    LINE():
+    Line():
         origin(Global), orientation(Vertical), x(0), y(0)
     {
 
     }
 
-    LINE(int x, int y, Orientation orientation, Origin origin = Global):
+    Line(int x, int y, Orientation orientation, Origin origin = Global):
         origin(origin), orientation(orientation), x(x), y(y)
     {
 
@@ -30,7 +30,7 @@ struct LINE
         return origin == Global;
     }
 
-    inline bool operator==(LINE const& other)const
+    inline bool operator==(Line const& other)const
     {
         return orientation == other.orientation && x == other.x && y == other.y;
     }

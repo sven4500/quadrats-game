@@ -6,7 +6,7 @@
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
-    CQuadrats widget;
+    QuadratsGame widget;
 
     QDesktopWidget* const desktop = app.desktop();
 

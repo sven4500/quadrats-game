@@ -8,20 +8,20 @@
 #include <line.h>
 
 // структура хранит ходы одного игрока
-struct PLAYER_STATS
+struct Player
 {
-    inline bool contains(LINE const& line)const
+    inline bool contains(Line const& line)const
     {
         return lines.contains(line);
     }
 
-    inline bool contains(QUADRAT const& quadrat)const
+    inline bool contains(Quadrat const& quadrat)const
     {
         return quadrats.contains(quadrat);
     }
 
-    QVector<LINE> lines;
-    QVector<QUADRAT> quadrats;
+    QVector<Line> lines;
+    QVector<Quadrat> quadrats;
     QColor playerColor;
 
 };

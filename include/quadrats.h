@@ -18,19 +18,19 @@
 #include <line.h>
 #include <player.h>
 
-class CQuadrats : public QMainWindow
+class QuadratsGame : public QMainWindow
 {
 
     Q_OBJECT
 
 public:
 
-    CQuadrats(QWidget* parent = 0);
-    ~CQuadrats();
+    QuadratsGame(QWidget* parent = 0);
+    ~QuadratsGame();
 
 private:
 
-    enum PLAYER{PlayerOne = 0, PlayerTwo = 1};
+    enum PlayerColor{PlayerOne = 0, PlayerTwo = 1};
 
     /*enum{BACK_COL = 0, LINE_COL, ACTLINE_COL, P1LINE_COL, P2LINE_COL};
     QColor const sm_colorProfile[] = {
@@ -66,27 +66,27 @@ private:
 //    void paintCaptured(QPainter& painter)const;
 
     // заполянет один квадрат заданным цветом
-    void drawQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const;
-    void drawLine(QPainter& painter, LINE const& line, QColor const& color)const;
-    void drawCross(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const;
-    void drawCircle(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const;
+    void drawQuadrat(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
+    void drawLine(QPainter& painter, Line const& line, QColor const& color)const;
+    void drawCross(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
+    void drawCircle(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
 
     // Возврщает индекс квадрата в глобальной системе координат (относительно левого верхнего угла).
-    QUADRAT getQuadrat(int x, int y)const;
-    QUADRAT translateQuadrat(QUADRAT const& quadrat)const;
+    Quadrat getQuadrat(int x, int y)const;
+    Quadrat translateQuadrat(Quadrat const& quadrat)const;
 
     // Возврщает линию квадрата в глобальной системе координат (относительно левого верхнего угла).
-    LINE getLine(int x, int y)const;
-    LINE translateLine(LINE const& line)const;
+    Line getLine(int x, int y)const;
+    Line translateLine(Line const& line)const;
 
     // Проверяет находится ли квадрат внутри игрового поля.
-    bool isInside(QUADRAT const& quadrat)const;
-    bool isInside(LINE const& line)const;
+    bool isInside(Quadrat const& quadrat)const;
+    bool isInside(Line const& line)const;
 
     QTimer* m_timer;
 
-    PLAYER_STATS m_stats[2];
-    PLAYER m_player;
+    Player m_stats[2];
+    PlayerColor m_player;
     unsigned int m_dimFull; // размер игрового поля с учётом отступов
     unsigned int m_dim; // размер реального игрового поля
     int m_x;

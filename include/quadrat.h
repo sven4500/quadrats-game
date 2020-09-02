@@ -3,18 +3,18 @@
 #define QUADRAT_H_
 
 // Структура хранит информацию о местоположении одного квадрата.
-struct QUADRAT
+struct Quadrat
 {
     // Система отсчёта. Относительно левого верхнего угла (Global), либо относительно центра игрового поля (Local).
     enum Origin{Local = 0, Global};
 
-    QUADRAT():
+    Quadrat():
         origin(Global), x(0), y(0)
     {
 
     }
 
-    QUADRAT(int x, int y, Origin origin = Global):
+    Quadrat(int x, int y, Origin origin = Global):
         origin(origin), x(x), y(y)
     {
 
@@ -30,7 +30,7 @@ struct QUADRAT
         return origin == Global;
     }
 
-    inline bool operator==(QUADRAT const& other)const
+    inline bool operator==(Quadrat const& other)const
     {
         return x == other.x && y == other.y;
     }

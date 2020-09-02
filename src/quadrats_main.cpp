@@ -1,11 +1,11 @@
 #include "quadrats.h"
 
-QColor const CQuadrats::sm_backgroundColor = QColor(250, 254, 254);
-QColor const CQuadrats::sm_lineColor = QColor(172, 222, 254);
-QColor const CQuadrats::sm_activeLineColor = QColor(84, 152, 250);
-QColor const CQuadrats::sm_sideLineColor = QColor(243, 22, 72);
+QColor const QuadratsGame::sm_backgroundColor = QColor(250, 254, 254);
+QColor const QuadratsGame::sm_lineColor = QColor(172, 222, 254);
+QColor const QuadratsGame::sm_activeLineColor = QColor(84, 152, 250);
+QColor const QuadratsGame::sm_sideLineColor = QColor(243, 22, 72);
 
-CQuadrats::CQuadrats(QWidget* parent): QMainWindow(parent)
+QuadratsGame::QuadratsGame(QWidget* parent): QMainWindow(parent)
 {
     m_player = PlayerOne;
 
@@ -42,38 +42,38 @@ CQuadrats::CQuadrats(QWidget* parent): QMainWindow(parent)
     m_timer->start(35);
 }
 
-CQuadrats::~CQuadrats()
+QuadratsGame::~QuadratsGame()
 {
     //m_timer->stop();
 }
 
-unsigned int CQuadrats::getOneSize()const
+unsigned int QuadratsGame::getOneSize()const
 {
     // игровое поле никогда не должно быть нулевым
     assert(m_dimFull != 0);
     return std::min(width(), height()) / m_dimFull;
 }
 
-QUADRAT CQuadrats::getQuadrat(int x, int y)const
+Quadrat QuadratsGame::getQuadrat(int x, int y)const
 {
     unsigned int const oneSize = getOneSize();
-    return QUADRAT(x / oneSize, y / oneSize);
+    return Quadrat(x / oneSize, y / oneSize);
 }
 
-QUADRAT CQuadrats::translateQuadrat(QUADRAT const& quadrat)const
+Quadrat QuadratsGame::translateQuadrat(Quadrat const& quadrat)const
 {
-    QUADRAT const q1 = getQuadrat(width() / 2, height() / 2);
-    QUADRAT q2 = quadrat;
+    Quadrat const q1 = getQuadrat(width() / 2, height() / 2);
+    Quadrat q2 = quadrat;
 
     switch(quadrat.origin)
     {
-    case QUADRAT::Origin::Local:
-        q2.origin = QUADRAT::Origin::Global;
+    case Quadrat::Origin::Local:
+        q2.origin = Quadrat::Origin::Global;
         q2.x = q2.x + q1.x;
         q2.y = q1.y - q2.y;
         break;
-    case QUADRAT::Origin::Global:
-        q2.origin = QUADRAT::Origin::Local;
+    case Quadrat::Origin::Global:
+        q2.origin = Quadrat::Origin::Local;
         q2.x = q2.x - q1.x;
         q2.y = q1.y - q2.y;
         break;
@@ -85,10 +85,10 @@ QUADRAT CQuadrats::translateQuadrat(QUADRAT const& quadrat)const
     return q2;
 }
 
-LINE CQuadrats::getLine(int x, int y)const
+Line QuadratsGame::getLine(int x, int y)const
 {
-    LINE line;
-    line.origin = LINE::Global;
+    Line line;
+    line.origin = Line::Global;
 
     unsigned int const oneSize = getOneSize();
 
@@ -117,22 +117,22 @@ LINE CQuadrats::getLine(int x, int y)const
     switch(j)
     {
     case 0:
-        line.orientation = LINE::Vertical;
+        line.orientation = Line::Vertical;
         line.x = ix;
         line.y = iy;
         break;
     case 1:
-        line.orientation = LINE::Horizontal;
+        line.orientation = Line::Horizontal;
         line.x = ix;
         line.y = iy;
         break;
     case 2:
-        line.orientation = LINE::Vertical;
+        line.orientation = Line::Vertical;
         line.x = ix + 1;
         line.y = iy;
         break;
     case 3:
-        line.orientation = LINE::Horizontal;
+        line.orientation = Line::Horizontal;
         line.x = ix;
         line.y = iy + 1;
         break;
@@ -144,21 +144,21 @@ LINE CQuadrats::getLine(int x, int y)const
     return line;
 }
 
-LINE CQuadrats::translateLine(LINE const& inpLine)const
+Line QuadratsGame::translateLine(Line const& inpLine)const
 {
-    QUADRAT const relQuad = getQuadrat(width() / 2, height() / 2);
-    LINE outLine = inpLine;
+    Quadrat const relQuad = getQuadrat(width() / 2, height() / 2);
+    Line outLine = inpLine;
 
     switch(outLine.origin)
     {
-    case LINE::Origin::Local:
-        outLine.origin = LINE::Origin::Global;
+    case Line::Origin::Local:
+        outLine.origin = Line::Origin::Global;
         outLine.x = outLine.x + relQuad.x;
         outLine.y = relQuad.y - outLine.y;
         break;
 
-    case LINE::Origin::Global:
-        outLine.origin = LINE::Origin::Local;
+    case Line::Origin::Global:
+        outLine.origin = Line::Origin::Local;
         outLine.x = outLine.x - relQuad.x;
         outLine.y = relQuad.y - outLine.y;
         break;
@@ -171,17 +171,17 @@ LINE CQuadrats::translateLine(LINE const& inpLine)const
     return outLine;
 }
 
-bool CQuadrats::isInside(QUADRAT const& quadrat)const
+bool QuadratsGame::isInside(Quadrat const& quadrat)const
 {
     // Если квадрат изначально в глобальных координатах, то сперва преобразуем в локальные.
-    QUADRAT const q = (quadrat.isGlobal() == true) ? translateQuadrat(quadrat) : quadrat;
+    Quadrat const q = (quadrat.isGlobal() == true) ? translateQuadrat(quadrat) : quadrat;
     unsigned int const dim2 = m_dim / 2;
     return (unsigned int)std::abs(q.x) + (unsigned int)std::abs(q.y) <= dim2;
 }
 
-bool CQuadrats::isInside(LINE const& line)const
+bool QuadratsGame::isInside(Line const& line)const
 {
-    LINE l = (line.isGlobal() == true) ? translateLine(line) : line;
+    Line l = (line.isGlobal() == true) ? translateLine(line) : line;
 
     unsigned int dim2 = m_dim / 2;
 
@@ -197,9 +197,9 @@ bool CQuadrats::isInside(LINE const& line)const
     {
         switch(l.orientation)
         {
-        case LINE::Orientation::Horizontal:
+        case Line::Orientation::Horizontal:
             return (unsigned int)std::abs(l.x) + (unsigned int)std::abs(l.y) < dim2;
-        case LINE::Orientation::Vertical:
+        case Line::Orientation::Vertical:
             return (unsigned int)std::abs(l.x) + (unsigned int)std::abs(l.y) <= dim2;
         default:
             return false;
@@ -209,9 +209,9 @@ bool CQuadrats::isInside(LINE const& line)const
     {
         switch(l.orientation)
         {
-        case LINE::Orientation::Horizontal:
+        case Line::Orientation::Horizontal:
             return (unsigned int)std::abs(l.x) + (unsigned int)std::abs(l.y) <= dim2;
-        case LINE::Orientation::Vertical:
+        case Line::Orientation::Vertical:
             return (unsigned int)std::abs(l.x) + (unsigned int)std::abs(l.y) < dim2;
         default:
             return false;
@@ -221,7 +221,7 @@ bool CQuadrats::isInside(LINE const& line)const
     return false;
 }
 
-void CQuadrats::mouseMoveEvent(QMouseEvent* event)
+void QuadratsGame::mouseMoveEvent(QMouseEvent* event)
 {
     // Сохраняем последние координаты указателя мыши.
     m_x = event->x();
@@ -229,12 +229,12 @@ void CQuadrats::mouseMoveEvent(QMouseEvent* event)
 }
 
 // Здесь будет сосредоточена основная логика игры.
-void CQuadrats::mousePressEvent(QMouseEvent* event)
+void QuadratsGame::mousePressEvent(QMouseEvent* event)
 {
     Q_UNUSED(event);
 
     #ifdef _DEBUG
-    LINE line;
+    Line line;
     line = getLine(m_x, m_y);
     qDebug() << line.x << line.y << "\n";
     line = translateLine(line);
@@ -244,9 +244,9 @@ void CQuadrats::mousePressEvent(QMouseEvent* event)
     #endif
 }
 
-void CQuadrats::mouseReleaseEvent(QMouseEvent* event)
+void QuadratsGame::mouseReleaseEvent(QMouseEvent* event)
 {
-    LINE const line = getLine(event->x(), event->y());
+    Line const line = getLine(event->x(), event->y());
 
     if(isInside(line) == true)
     {
@@ -257,7 +257,7 @@ void CQuadrats::mouseReleaseEvent(QMouseEvent* event)
     }
 }
 
-void CQuadrats::wheelEvent(QWheelEvent* event)
+void QuadratsGame::wheelEvent(QWheelEvent* event)
 {
     assert(m_dimFull >= m_dim);
     assert(m_dimFull % 2 == 0);

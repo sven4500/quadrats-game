@@ -1,6 +1,6 @@
 #include "quadrats.h"
 
-void CQuadrats::paintEvent(QPaintEvent* event)
+void QuadratsGame::paintEvent(QPaintEvent* event)
 {
     Q_UNUSED(event);
 
@@ -40,7 +40,7 @@ void CQuadrats::paintEvent(QPaintEvent* event)
     painter.restore();
 }
 
-void CQuadrats::paintBackground(QPainter& painter)const
+void QuadratsGame::paintBackground(QPainter& painter)const
 {
     // размер одного квадрата в пикселях
     unsigned int const oneSize = getOneSize();
@@ -82,7 +82,7 @@ void CQuadrats::paintBackground(QPainter& painter)const
 //void CQuadrats::paintCaptured(QPainter& painter, int x, int y, )
 //{}
 
-void CQuadrats::paintBorder(QPainter& painter)const
+void QuadratsGame::paintBorder(QPainter& painter)const
 {
 //    assert(m_dimFull >= m_dim && m_dim != 0);
 
@@ -138,9 +138,9 @@ void CQuadrats::paintBorder(QPainter& painter)const
     }
 }
 
-void CQuadrats::paintCurrentQuadrat(QPainter& painter)const
+void QuadratsGame::paintCurrentQuadrat(QPainter& painter)const
 {
-    QUADRAT const quadrat = getQuadrat(m_x, m_y);
+    Quadrat const quadrat = getQuadrat(m_x, m_y);
 
     if(isInside(quadrat) == true)
     {
@@ -148,9 +148,9 @@ void CQuadrats::paintCurrentQuadrat(QPainter& painter)const
     }
 }
 
-void CQuadrats::paintCurrentLine(QPainter& painter)const
+void QuadratsGame::paintCurrentLine(QPainter& painter)const
 {
-    LINE const line = getLine(m_x, m_y);
+    Line const line = getLine(m_x, m_y);
 
     if(isInside(line) == true)
     {
@@ -158,12 +158,12 @@ void CQuadrats::paintCurrentLine(QPainter& painter)const
     }
 }
 
-void CQuadrats::paintCorner(QPainter& painter)const
+void QuadratsGame::paintCorner(QPainter& painter)const
 {
-    QUADRAT quadrats[4];
+    Quadrat quadrats[4];
 
     {
-        QUADRAT const quadrat = getQuadrat(width() / 2, height() / 2);
+        Quadrat const quadrat = getQuadrat(width() / 2, height() / 2);
         unsigned int const dim2 = m_dim / 2;
 
         quadrats[0] = quadrat;
@@ -185,7 +185,7 @@ void CQuadrats::paintCorner(QPainter& painter)const
     drawQuadrat(painter, quadrats[3], m_playerTwoColor);
 }
 
-void CQuadrats::paintPlayerLines(QPainter& painter)const
+void QuadratsGame::paintPlayerLines(QPainter& painter)const
 {
     for(int i = 0; i < 2; ++i)
     {
@@ -196,27 +196,27 @@ void CQuadrats::paintPlayerLines(QPainter& painter)const
     }
 }
 
-void CQuadrats::paintPlayerQuadrats(QPainter& painter)const
+void QuadratsGame::paintPlayerQuadrats(QPainter& painter)const
 {
     Q_UNUSED(painter);
 }
 
-void CQuadrats::drawQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const
+void QuadratsGame::drawQuadrat(QPainter& painter, Quadrat const& quadrat, QColor const& color)const
 {
     // Если квдрат в локальных координатах тогда сперва преобразуем в глобальные.
-    QUADRAT const q = (quadrat.isLocal() == true) ? translateQuadrat(quadrat) : quadrat;
+    Quadrat const q = (quadrat.isLocal() == true) ? translateQuadrat(quadrat) : quadrat;
 
     unsigned int const oneSize = getOneSize();
 
     painter.fillRect(q.x * oneSize, q.y * oneSize, oneSize, oneSize, color);
 }
 
-void CQuadrats::drawLine(QPainter& painter, LINE const& line, QColor const& color)const
+void QuadratsGame::drawLine(QPainter& painter, Line const& line, QColor const& color)const
 {
     //qDebug() << line.x << line.y << "\n";
 
     // Если линия в локальных координатах то преобразуем в глобальные.
-    LINE const l = (line.isLocal() == true) ? translateLine(line) : line;
+    Line const l = (line.isLocal() == true) ? translateLine(line) : line;
 
     //qDebug() << l.x << l.y << "\n\n";
 
@@ -236,11 +236,11 @@ void CQuadrats::drawLine(QPainter& painter, LINE const& line, QColor const& colo
 
     switch(l.orientation)
     {
-    case LINE::Horizontal:
+    case Line::Horizontal:
         painter.drawLine(ix, iy, ix + oneSize, iy);
         break;
 
-    case LINE::Vertical:
+    case Line::Vertical:
         painter.drawLine(ix, iy, ix, iy + oneSize);
         break;
 
@@ -250,7 +250,7 @@ void CQuadrats::drawLine(QPainter& painter, LINE const& line, QColor const& colo
     };
 }
 
-void CQuadrats::drawCross(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const
+void QuadratsGame::drawCross(QPainter& painter, Quadrat const& quadrat, QColor const& color)const
 {
     unsigned int const oneSize = getOneSize();
 
@@ -277,7 +277,7 @@ void CQuadrats::drawCross(QPainter& painter, QUADRAT const& quadrat, QColor cons
     painter.drawLine(rect.left(), rect.bottom(), rect.right(), rect.top());
 }
 
-void CQuadrats::drawCircle(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const
+void QuadratsGame::drawCircle(QPainter& painter, Quadrat const& quadrat, QColor const& color)const
 {
     unsigned int const oneSize = getOneSize();
 

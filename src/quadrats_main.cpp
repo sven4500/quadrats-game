@@ -1,4 +1,5 @@
-#include "quadrats.h"
+#include <quadrats.h>
+#include <version.h>
 
 QColor const QuadratsGame::sm_backgroundColor = QColor(250, 254, 254);
 QColor const QuadratsGame::sm_lineColor = QColor(172, 222, 254);
@@ -30,11 +31,15 @@ QuadratsGame::QuadratsGame(QWidget* parent): QMainWindow(parent)
 
     setMouseTracking(true);
 
-    #ifdef _DEBUG
-    setWindowTitle("Квадраты (версия 0.19 отладка)");
-    #else
-    setWindowTitle("Квадраты (версия 0.19)");
-    #endif
+    QString const windowTitle = QString(
+        #ifdef _DEBUG
+        "Квадраты (сборка %1 отладка)"
+        #else
+        "Квадраты (сборка %1)"
+        #endif
+        ).arg(BuildVersion);
+
+    setWindowTitle(windowTitle);
 
     // Создаём таймер который раз в 35 мс будет вызывать метод для обновления рабочей области окна.
     m_timer = new QTimer(this);

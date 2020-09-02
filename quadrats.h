@@ -26,6 +26,8 @@ public:
 
 private:
 
+    enum PLAYER{PlayerOne = 0, PlayerTwo = 1};
+
     // Структура хранит информацию о местоположении одного квадрата.
     struct QUADRAT
     {
@@ -52,6 +54,11 @@ private:
         inline bool isGlobal()const
         {
             return origin == Global;
+        }
+
+        inline bool operator==(QUADRAT const& other)const
+        {
+            return x == other.x && y == other.y;
         }
 
         Origin origin;  // Система отсчёта: локальная или глобальная.
@@ -87,6 +94,11 @@ private:
             return origin == Global;
         }
 
+        inline bool operator==(LINE const& other)const
+        {
+            return orientation == other.orientation && x == other.x && y == other.y;
+        }
+
         Origin origin;              // Система координат: локальная или глобальная.
         Orientation orientation;    // Расположение линии: горизонтальное или вертикальное.
         int x;                      // Координата линии.
@@ -96,8 +108,18 @@ private:
     // структура хранит ходы одного игрока
     struct PLAYER_STATS
     {
+        inline bool contains(LINE const& line)const
+        {
+            return lines.contains(line);
+        }
+
+        inline bool contains(QUADRAT const& quadrat)const
+        {
+            return quadrats.contains(quadrat);
+        }
+
         QVector<LINE> lines;
-        QVector<QUADRAT> captured;
+        QVector<QUADRAT> quadrats;
         QColor playerColor;
     };
 
@@ -130,7 +152,9 @@ private:
     void paintCurrentQuadrat(QPainter& painter)const;
     void paintCurrentLine(QPainter& painter)const;
     void paintCorner(QPainter& painter)const; // <= исчезнет после paintCaptured (просто добавляем по два поля каждому).
-    void paintCaptured(QPainter& painter)const;
+    void paintPlayerLines(QPainter& painter)const;
+    void paintPlayerQuadrats(QPainter& painter)const;
+//    void paintCaptured(QPainter& painter)const;
 
     // заполянет один квадрат заданным цветом
     void drawQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor const& color)const;
@@ -153,6 +177,7 @@ private:
     QTimer* m_timer;
 
     PLAYER_STATS m_stats[2];
+    PLAYER m_player;
     unsigned int m_dimFull; // размер игрового поля с учётом отступов
     unsigned int m_dim; // размер реального игрового поля
     int m_x;

@@ -24,14 +24,19 @@ void CQuadrats::paintEvent(QPaintEvent* event)
     paintBackground(painter);
     painter.restore();
 
-    // Выделяем границы игрового поля.
+    // Рисуем линии обоих игроков.
     painter.save();
-    paintBorder(painter);
+    paintPlayerLines(painter);
     painter.restore();
 
     // Рисуем текущую линию.
     painter.save();
     paintCurrentLine(painter);
+    painter.restore();
+
+    // Выделяем границы игрового поля.
+    painter.save();
+    paintBorder(painter);
     painter.restore();
 }
 
@@ -180,8 +185,18 @@ void CQuadrats::paintCorner(QPainter& painter)const
     drawQuadrat(painter, quadrats[3], m_playerTwoColor);
 }
 
-// Отрисовывает захваченные игроками квадраты.
-void CQuadrats::paintCaptured(QPainter& painter)const
+void CQuadrats::paintPlayerLines(QPainter& painter)const
+{
+    for(int i = 0; i < 2; ++i)
+    {
+        for(int j = 0; j < m_stats[i].lines.size(); ++j)
+        {
+            drawLine(painter, m_stats[i].lines[j], m_stats[i].playerColor);
+        }
+    }
+}
+
+void CQuadrats::paintPlayerQuadrats(QPainter& painter)const
 {
     Q_UNUSED(painter);
 }
@@ -198,8 +213,12 @@ void CQuadrats::drawQuadrat(QPainter& painter, QUADRAT const& quadrat, QColor co
 
 void CQuadrats::drawLine(QPainter& painter, LINE const& line, QColor const& color)const
 {
+    //qDebug() << line.x << line.y << "\n";
+
     // Если линия в локальных координатах то преобразуем в глобальные.
     LINE const l = (line.isLocal() == true) ? translateLine(line) : line;
+
+    //qDebug() << l.x << l.y << "\n\n";
 
     unsigned int const oneSize = getOneSize();
     unsigned int const ix = l.x * oneSize;

@@ -7,6 +7,8 @@ QColor const CQuadrats::sm_sideLineColor = QColor(243, 22, 72);
 
 CQuadrats::CQuadrats(QWidget* parent): QMainWindow(parent)
 {
+    m_player = PlayerOne;
+
     m_playerOneColor = QColor(0, 162, 232);
     m_playerTwoColor = QColor(237, 28, 36);
 
@@ -42,7 +44,7 @@ CQuadrats::CQuadrats(QWidget* parent): QMainWindow(parent)
 
 CQuadrats::~CQuadrats()
 {
-    m_timer->stop();
+    //m_timer->stop();
 }
 
 unsigned int CQuadrats::getOneSize()const
@@ -89,6 +91,7 @@ CQuadrats::LINE CQuadrats::getLine(int x, int y)const
     line.origin = LINE::Global;
 
     unsigned int const oneSize = getOneSize();
+
     unsigned int const ix = x / oneSize;
     unsigned int const iy = y / oneSize;
 
@@ -143,8 +146,11 @@ CQuadrats::LINE CQuadrats::getLine(int x, int y)const
 
 CQuadrats::LINE CQuadrats::translateLine(LINE const& line)const
 {
+    //unsigned int const oneSize2 = getOneSize() / 2;
     LINE const l1 = getLine(width() / 2, height() / 2);
     LINE l2 = line;
+
+    //qDebug() << width() << height() << l1.x << l1.y << "\n";
 
     switch(l2.origin)
     {
@@ -241,7 +247,15 @@ void CQuadrats::mousePressEvent(QMouseEvent* event)
 
 void CQuadrats::mouseReleaseEvent(QMouseEvent* event)
 {
-    Q_UNUSED(event);
+    LINE const line = getLine(event->x(), event->y());
+
+    if(isInside(line) == true)
+    {
+        if(m_stats[m_player].contains(line) == false && m_stats[m_player].contains(line) == false)
+        {
+            m_stats[m_player].lines.append(translateLine(line));
+        }
+    }
 }
 
 void CQuadrats::wheelEvent(QWheelEvent* event)

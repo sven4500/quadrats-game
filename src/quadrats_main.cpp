@@ -54,13 +54,13 @@ unsigned int CQuadrats::getOneSize()const
     return std::min(width(), height()) / m_dimFull;
 }
 
-CQuadrats::QUADRAT CQuadrats::getQuadrat(int x, int y)const
+QUADRAT CQuadrats::getQuadrat(int x, int y)const
 {
     unsigned int const oneSize = getOneSize();
     return QUADRAT(x / oneSize, y / oneSize);
 }
 
-CQuadrats::QUADRAT CQuadrats::translateQuadrat(QUADRAT const& quadrat)const
+QUADRAT CQuadrats::translateQuadrat(QUADRAT const& quadrat)const
 {
     QUADRAT const q1 = getQuadrat(width() / 2, height() / 2);
     QUADRAT q2 = quadrat;
@@ -85,7 +85,7 @@ CQuadrats::QUADRAT CQuadrats::translateQuadrat(QUADRAT const& quadrat)const
     return q2;
 }
 
-CQuadrats::LINE CQuadrats::getLine(int x, int y)const
+LINE CQuadrats::getLine(int x, int y)const
 {
     LINE line;
     line.origin = LINE::Global;
@@ -144,7 +144,7 @@ CQuadrats::LINE CQuadrats::getLine(int x, int y)const
     return line;
 }
 
-CQuadrats::LINE CQuadrats::translateLine(LINE const& line)const
+LINE CQuadrats::translateLine(LINE const& line)const
 {
     //unsigned int const oneSize2 = getOneSize() / 2;
     LINE const l1 = getLine(width() / 2, height() / 2);

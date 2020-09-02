@@ -35,7 +35,10 @@ SOURCES += \
     $$SRC_DIR/quadrats_main.cpp
 
 HEADERS += \
-    $$INCLUDE_DIR/quadrats.h
+    $$INCLUDE_DIR/quadrats.h \
+    $$INCLUDE_DIR/quadrat.h \
+    $$INCLUDE_DIR/line.h \
+    $$INCLUDE_DIR/player.h
 
 RESOURCES += \
     $$RESOURCES_DIR/resources.qrc

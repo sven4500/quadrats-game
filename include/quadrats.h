@@ -1,6 +1,8 @@
-#ifndef __CQUADRATS_H
-#define __CQUADRATS_H
+#pragma once
+#ifndef QUADRATS_H_
+#define QUADRATS_H_
 
+#include <cassert>
 #include <QMainWindow>
 #include <QPainter>
 #include <QBrush>
@@ -12,7 +14,9 @@
 #include <QMenuBar>
 #include <QDebug>
 #include <QTimer>
-#include <cassert>
+#include <quadrat.h>
+#include <line.h>
+#include <player.h>
 
 class CQuadrats : public QMainWindow
 {
@@ -27,101 +31,6 @@ public:
 private:
 
     enum PLAYER{PlayerOne = 0, PlayerTwo = 1};
-
-    // Структура хранит информацию о местоположении одного квадрата.
-    struct QUADRAT
-    {
-        // Система отсчёта. Относительно левого верхнего угла (Global), либо относительно центра игрового поля (Local).
-        enum Origin{Local = 0, Global};
-
-        QUADRAT():
-            origin(Global), x(0), y(0)
-        {
-
-        }
-
-        QUADRAT(int x, int y, Origin origin = Global):
-            origin(origin), x(x), y(y)
-        {
-
-        }
-
-        inline bool isLocal()const
-        {
-            return origin == Local;
-        }
-
-        inline bool isGlobal()const
-        {
-            return origin == Global;
-        }
-
-        inline bool operator==(QUADRAT const& other)const
-        {
-            return x == other.x && y == other.y;
-        }
-
-        Origin origin;  // Система отсчёта: локальная или глобальная.
-        int x;          // Координата квадрата.
-        int y;          // Координата квадрата.
-    };
-
-    // Структура хранит информацию о местоположении одной линии.
-    struct LINE
-    {
-        enum Origin{Local = 0, Global};
-        enum Orientation{Horizontal = 0, Vertical};
-
-        LINE():
-            origin(Global), orientation(Vertical), x(0), y(0)
-        {
-
-        }
-
-        LINE(int x, int y, Orientation orientation, Origin origin = Global):
-            origin(origin), orientation(orientation), x(x), y(y)
-        {
-
-        }
-
-        inline bool isLocal()const
-        {
-            return origin == Local;
-        }
-
-        inline bool isGlobal()const
-        {
-            return origin == Global;
-        }
-
-        inline bool operator==(LINE const& other)const
-        {
-            return orientation == other.orientation && x == other.x && y == other.y;
-        }
-
-        Origin origin;              // Система координат: локальная или глобальная.
-        Orientation orientation;    // Расположение линии: горизонтальное или вертикальное.
-        int x;                      // Координата линии.
-        int y;                      // Координата линии.
-    };
-
-    // структура хранит ходы одного игрока
-    struct PLAYER_STATS
-    {
-        inline bool contains(LINE const& line)const
-        {
-            return lines.contains(line);
-        }
-
-        inline bool contains(QUADRAT const& quadrat)const
-        {
-            return quadrats.contains(quadrat);
-        }
-
-        QVector<LINE> lines;
-        QVector<QUADRAT> quadrats;
-        QColor playerColor;
-    };
 
     /*enum{BACK_COL = 0, LINE_COL, ACTLINE_COL, P1LINE_COL, P2LINE_COL};
     QColor const sm_colorProfile[] = {

@@ -1,19 +1,20 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2017-08-11T13:20:48
-#
-#-------------------------------------------------
-
-QT       += core gui
+QT += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-win32:RC_ICONS += app.ico
 
-TARGET = Quadrats
 TEMPLATE = app
 
-CONFIG(debug, debug|release): DEFINES += _DEBUG
-CONFIG(release, debug|release): DEFINES += NDEBUG
+Debug: {
+    TARGET = QuadratsDebug
+    DEFINES += _DEBUG
+}
+
+Release: {
+    TARGET = QuadratsRelease
+    DEFINES += NDEBUG QT_NO_DEBUG QT_NO_DEBUG_OUTPUT
+}
+
+win32:RC_ICONS += app.ico
 
 SOURCES += main.cpp\
     quadrats_graphics.cpp \

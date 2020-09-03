@@ -29,6 +29,13 @@ QuadratsGame::QuadratsGame(QWidget* parent): QMainWindow(parent)
         menu->addAction("О программе");
     }
 
+    m_painterFuncs.append(&paintBackgroud);
+    m_painterFuncs.append(&paintCurrentQuadrat);
+    m_painterFuncs.append(&paintGrid);
+    m_painterFuncs.append(&paintPlayerLines);
+    m_painterFuncs.append(&paintCurrentLine);
+    m_painterFuncs.append(&paintGameBorder);
+
     setMouseTracking(true);
 
     QString const windowTitle = QString(

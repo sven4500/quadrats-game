@@ -38,14 +38,13 @@ private:
         QColor()
     };*/
 
+    // Тип функции которая используется для отрисовки одного слоя изображения.
+    typedef void (QuadratsGame::* PainterFunc)(QPainter&)const;
+
     static QColor const sm_backgroundColor;
     static QColor const sm_lineColor;
     static QColor const sm_activeLineColor;
     static QColor const sm_sideLineColor;
-
-    QColor m_playerOneColor;
-    QColor m_playerTwoColor;
-    //static QColor const sm_activeLineColor;
 
     virtual void paintEvent(QPaintEvent* event);
 
@@ -56,14 +55,15 @@ private:
 
     unsigned int getOneSize()const; // возвращает рзмер одного квдрт в пикселях
 
-    void paintBackground(QPainter& painter)const;
-    void paintBorder(QPainter& painter)const;
+    // Список методов отрисовки слоёв изображения.
+    void paintBackgroud(QPainter& painter)const;
+    void paintGrid(QPainter& painter)const;
+    void paintGameBorder(QPainter& painter)const;
     void paintCurrentQuadrat(QPainter& painter)const;
     void paintCurrentLine(QPainter& painter)const;
     void paintCorner(QPainter& painter)const; // <= исчезнет после paintCaptured (просто добавляем по два поля каждому).
     void paintPlayerLines(QPainter& painter)const;
-    void paintPlayerQuadrats(QPainter& painter)const;
-//    void paintCaptured(QPainter& painter)const;
+//    void paintCapturedQuadrats(QPainter& painter)const;
 
     // заполянет один квадрат заданным цветом
     void drawQuadrat(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
@@ -82,6 +82,12 @@ private:
     // Проверяет находится ли квадрат внутри игрового поля.
     bool isInside(Quadrat const& quadrat)const;
     bool isInside(Line const& line)const;
+
+    // Вектор слоём отрисовки изображения.
+    QVector<PainterFunc> m_painterFuncs;
+
+    QColor m_playerOneColor;
+    QColor m_playerTwoColor;
 
     QTimer* m_timer;
 

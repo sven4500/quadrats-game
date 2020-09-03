@@ -4,43 +4,23 @@ void QuadratsGame::paintEvent(QPaintEvent* event)
 {
     Q_UNUSED(event);
 
-    // Инициализируем устройство рисования и очищем рабочу область перед рисовнием нового кадра.
     QPainter painter(this);
-    painter.fillRect(0, 0, width(), height(), sm_backgroundColor);
 
-    // Заполняет цветом квадраты на вершинах (нужно будет скоро избавиться и
-    // просто добавлять каждому игроку изначально по два квадрата).
-//    painter.save();
-//    paintCorner(painter);
-//    painter.restore();
-
-    // Подсвечиваем квадрат на который указывает указатель.
-    painter.save();
-    paintCurrentQuadrat(painter);
-    painter.restore();
-
-    // Рисуем сетку на всей рабочей области.
-    painter.save();
-    paintBackground(painter);
-    painter.restore();
-
-    // Рисуем линии обоих игроков.
-    painter.save();
-    paintPlayerLines(painter);
-    painter.restore();
-
-    // Рисуем текущую линию.
-    painter.save();
-    paintCurrentLine(painter);
-    painter.restore();
-
-    // Выделяем границы игрового поля.
-    painter.save();
-    paintBorder(painter);
-    painter.restore();
+    for(int i = 0; i < m_painterFuncs.size(); ++i)
+    {
+        PainterFunc const& painterFunc = m_painterFuncs[i];
+        painter.save();
+        (this->*painterFunc)(painter);
+        painter.restore();
+    }
 }
 
-void QuadratsGame::paintBackground(QPainter& painter)const
+void QuadratsGame::paintBackgroud(QPainter& painter)const
+{
+    painter.fillRect(0, 0, width(), height(), sm_backgroundColor);
+}
+
+void QuadratsGame::paintGrid(QPainter& painter)const
 {
     // размер одного квадрата в пикселях
     unsigned int const oneSize = getOneSize();
@@ -82,7 +62,7 @@ void QuadratsGame::paintBackground(QPainter& painter)const
 //void CQuadrats::paintCaptured(QPainter& painter, int x, int y, )
 //{}
 
-void QuadratsGame::paintBorder(QPainter& painter)const
+void QuadratsGame::paintGameBorder(QPainter& painter)const
 {
 //    assert(m_dimFull >= m_dim && m_dim != 0);
 
@@ -160,6 +140,8 @@ void QuadratsGame::paintCurrentLine(QPainter& painter)const
 
 void QuadratsGame::paintCorner(QPainter& painter)const
 {
+    // TODO: нужно удалить этот метод. Игроку просто стоит добавить по два.
+
     Quadrat quadrats[4];
 
     {
@@ -194,11 +176,6 @@ void QuadratsGame::paintPlayerLines(QPainter& painter)const
             drawLine(painter, m_stats[i].lines[j], m_stats[i].playerColor);
         }
     }
-}
-
-void QuadratsGame::paintPlayerQuadrats(QPainter& painter)const
-{
-    Q_UNUSED(painter);
 }
 
 void QuadratsGame::drawQuadrat(QPainter& painter, Quadrat const& quadrat, QColor const& color)const

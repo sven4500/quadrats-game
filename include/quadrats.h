@@ -42,9 +42,7 @@ private:
     typedef void (QuadratsGame::* PainterFunc)(QPainter&)const;
 
     static QColor const sm_backgroundColor;
-    static QColor const sm_lineColor;
-    static QColor const sm_activeLineColor;
-    static QColor const sm_sideLineColor;
+    static QColor const sm_gridColor;
 
     virtual void paintEvent(QPaintEvent* event);
 
@@ -83,7 +81,7 @@ private:
     bool isInside(Quadrat const& quadrat)const;
     bool isInside(Line const& line)const;
 
-    // Вектор слоём отрисовки изображения.
+    // Вектор слоёв отрисовки изображения.
     QVector<PainterFunc> m_painterFuncs;
 
     QColor m_playerOneColor;

@@ -51,7 +51,7 @@ void QuadratsGame::paintGrid(QPainter& painter)const
     }
 
     // рисуем просчмианную сетку
-    painter.setPen(sm_lineColor);
+    painter.setPen(sm_gridColor);
     painter.drawLines(grid);
 
     // рисуем красную линию
@@ -134,7 +134,7 @@ void QuadratsGame::paintCurrentLine(QPainter& painter)const
 
     if(isInside(line) == true)
     {
-        drawLine(painter, line, sm_activeLineColor);
+        drawLine(painter, line, m_playerOneColor);
     }
 }
 

@@ -2,9 +2,7 @@
 #include <version.h>
 
 QColor const QuadratsGame::sm_backgroundColor = QColor(250, 254, 254);
-QColor const QuadratsGame::sm_lineColor = QColor(172, 222, 254);
-QColor const QuadratsGame::sm_activeLineColor = QColor(84, 152, 250);
-QColor const QuadratsGame::sm_sideLineColor = QColor(243, 22, 72);
+QColor const QuadratsGame::sm_gridColor = QColor(172, 222, 254);
 
 QuadratsGame::QuadratsGame(QWidget* parent): QMainWindow(parent)
 {
@@ -29,6 +27,7 @@ QuadratsGame::QuadratsGame(QWidget* parent): QMainWindow(parent)
         menu->addAction("О программе");
     }
 
+    // Формируем список методов для отрисовки в порядке добавления.
     m_painterFuncs.append(&paintBackgroud);
     m_painterFuncs.append(&paintCurrentQuadrat);
     m_painterFuncs.append(&paintGrid);

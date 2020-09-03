@@ -39,7 +39,7 @@ HEADERS += \
     $$INCLUDE_DIR/quadrat.h \
     $$INCLUDE_DIR/line.h \
     $$INCLUDE_DIR/player.h \
-    ../include/version.h
+    $$INCLUDE_DIR/version.h
 
 RESOURCES += \
     $$RESOURCES_DIR/resources.qrc

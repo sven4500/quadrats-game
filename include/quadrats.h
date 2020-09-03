@@ -30,7 +30,7 @@ public:
 
 private:
 
-    enum PlayerColor{PlayerOne = 0, PlayerTwo = 1};
+    enum PlayerEnum{PlayerOne = 0, PlayerTwo = 1};
 
     /*enum{BACK_COL = 0, LINE_COL, ACTLINE_COL, P1LINE_COL, P2LINE_COL};
     QColor const sm_colorProfile[] = {
@@ -61,7 +61,7 @@ private:
     void paintCurrentLine(QPainter& painter)const;
     void paintCorner(QPainter& painter)const; // <= исчезнет после paintCaptured (просто добавляем по два поля каждому).
     void paintPlayerLines(QPainter& painter)const;
-//    void paintCapturedQuadrats(QPainter& painter)const;
+    void paintCapturedQuadrats(QPainter& painter)const;
 
     // заполянет один квадрат заданным цветом
     void drawQuadrat(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
@@ -90,7 +90,7 @@ private:
     QTimer* m_timer;
 
     Player m_stats[2];
-    PlayerColor m_player;
+    PlayerEnum m_currentPlayer;
     unsigned int m_dimFull; // размер игрового поля с учётом отступов
     unsigned int m_dim; // размер реального игрового поля
     int m_x;

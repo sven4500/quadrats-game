@@ -6,7 +6,7 @@ QColor const QuadratsGame::sm_gridColor = QColor(172, 222, 254);
 
 QuadratsGame::QuadratsGame(QWidget* parent): QMainWindow(parent)
 {
-    m_player = PlayerOne;
+    m_currentPlayer = PlayerOne;
 
     m_playerOneColor = QColor(0, 162, 232);
     m_playerTwoColor = QColor(237, 28, 36);
@@ -14,8 +14,15 @@ QuadratsGame::QuadratsGame(QWidget* parent): QMainWindow(parent)
     m_dimFull = 14; // сетка по-умолчанию
     m_dim = 9;
 
+    auto dimHalf = m_dim / 2;
+
     m_stats[0].playerColor = m_playerOneColor;
+    m_stats[0].quadrats.push_back(Quadrat(-dimHalf, 0, Quadrat::Local));
+    m_stats[0].quadrats.push_back(Quadrat(+dimHalf, 0, Quadrat::Local));
+
     m_stats[1].playerColor = m_playerTwoColor;
+    m_stats[1].quadrats.push_back(Quadrat(0, -dimHalf, Quadrat::Local));
+    m_stats[1].quadrats.push_back(Quadrat(0, +dimHalf, Quadrat::Local));
 
     // создаём меню с параметрами в заголовке окна.
     {
@@ -31,6 +38,7 @@ QuadratsGame::QuadratsGame(QWidget* parent): QMainWindow(parent)
     m_painterFuncs.append(&paintBackgroud);
     m_painterFuncs.append(&paintCurrentQuadrat);
     m_painterFuncs.append(&paintGrid);
+    m_painterFuncs.append(&paintCapturedQuadrats);
     m_painterFuncs.append(&paintPlayerLines);
     m_painterFuncs.append(&paintCurrentLine);
     m_painterFuncs.append(&paintGameBorder);
@@ -261,9 +269,9 @@ void QuadratsGame::mouseReleaseEvent(QMouseEvent* event)
 
     if(isInside(line) == true)
     {
-        if(m_stats[m_player].contains(line) == false && m_stats[m_player].contains(line) == false)
+        if(m_stats[m_currentPlayer].contains(line) == false && m_stats[m_currentPlayer].contains(line) == false)
         {
-            m_stats[m_player].lines.append(translateLine(line));
+            m_stats[m_currentPlayer].lines.append(translateLine(line));
         }
     }
 }

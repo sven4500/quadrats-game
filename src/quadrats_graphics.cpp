@@ -59,8 +59,18 @@ void QuadratsGame::paintGrid(QPainter& painter)const
 //    painter.drawLine(oneSize * 4.5, 0, oneSize * 4.5, height());
 }
 
-//void CQuadrats::paintCaptured(QPainter& painter, int x, int y, )
-//{}
+void QuadratsGame::paintCapturedQuadrats(QPainter& painter)const
+{
+    auto const& quadOne = m_stats[0].quadrats;
+
+    for(int i = 0; i < quadOne.size(); ++i)
+        drawCross(painter, quadOne[i], m_stats[0].playerColor);
+
+    auto const& quadTwo = m_stats[1].quadrats;
+
+    for(int i = 0; i < quadTwo.size(); ++i)
+        drawCircle(painter, quadTwo[i], m_stats[1].playerColor);
+}
 
 void QuadratsGame::paintGameBorder(QPainter& painter)const
 {
@@ -234,21 +244,19 @@ void QuadratsGame::drawCross(QPainter& painter, Quadrat const& quadrat, QColor c
     unsigned int const margin = oneSize * 0.25;
     unsigned int const size = oneSize - margin * 2;
 
-    // Вычисляем квадрат внутри основного квадрата где можно рисовать.
-    QRect const rect(quadrat.x * oneSize + margin + 1, quadrat.y * oneSize + margin + 1, size, size);
+    Quadrat const translated = translateQuadrat(quadrat);
 
-    // Устанавливаем стиль отрисовки.
-    {
-        QPen pen;
-        pen.setWidth(2);
-        pen.setColor(color);
+    QRect const rect(translated.x * oneSize + margin + 1, translated.y * oneSize + margin + 1, size, size);
 
-        painter.setPen(pen);
-        painter.setBrush(Qt::NoBrush);
+    QPen pen;
+    pen.setWidth(2);
+    pen.setColor(color);
 
-        painter.setRenderHint(QPainter::Antialiasing, true);
-        painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
-    }
+    painter.setPen(pen);
+    painter.setBrush(Qt::NoBrush);
+
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
 
     painter.drawLine(rect.left(), rect.top(), rect.right(), rect.bottom());
     painter.drawLine(rect.left(), rect.bottom(), rect.right(), rect.top());
@@ -261,21 +269,19 @@ void QuadratsGame::drawCircle(QPainter& painter, Quadrat const& quadrat, QColor 
     unsigned int const margin = oneSize * 0.25;
     unsigned int const size = oneSize - margin * 2;
 
-    // Вычисляем квадрат внутри основного квадрата где можно рисовать.
-    QRect const rect(quadrat.x * oneSize + margin + 1, quadrat.y * oneSize + margin + 1, size - 1, size - 1);
+    Quadrat const translated = translateQuadrat(quadrat);
 
-    // Устанавливаем стиль отрисовки.
-    {
-        QPen pen;
-        pen.setWidth(2);
-        pen.setColor(color);
+    QRect const rect(translated.x * oneSize + margin + 1, translated.y * oneSize + margin + 1, size - 1, size - 1);
 
-        painter.setPen(pen);
-        painter.setBrush(Qt::NoBrush);
+    QPen pen;
+    pen.setWidth(2);
+    pen.setColor(color);
 
-        painter.setRenderHint(QPainter::Antialiasing, true);
-        painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
-    }
+    painter.setPen(pen);
+    painter.setBrush(Qt::NoBrush);
+
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
 
     painter.drawEllipse(rect);
 }

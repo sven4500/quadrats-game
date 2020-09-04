@@ -1,4 +1,4 @@
-#include "quadrats.h"
+#include <quadratsgame.h>
 
 void QuadratsGame::paintEvent(QPaintEvent* event)
 {

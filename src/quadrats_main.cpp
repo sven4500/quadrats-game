@@ -1,4 +1,4 @@
-#include <quadrats.h>
+#include <quadratsgame.h>
 #include <version.h>
 
 QColor const QuadratsGame::sm_backgroundColor = QColor(250, 254, 254);
@@ -20,9 +20,17 @@ QuadratsGame::QuadratsGame(QWidget* parent): QMainWindow(parent)
     m_stats[0].quadrats.push_back(Quadrat(-dimHalf, 0, Quadrat::Local));
     m_stats[0].quadrats.push_back(Quadrat(+dimHalf, 0, Quadrat::Local));
 
+    #ifdef _DEBUG
+    m_stats[0].quadrats.push_back(Quadrat(-1, +1, Quadrat::Local));
+    #endif
+
     m_stats[1].playerColor = m_playerTwoColor;
     m_stats[1].quadrats.push_back(Quadrat(0, -dimHalf, Quadrat::Local));
     m_stats[1].quadrats.push_back(Quadrat(0, +dimHalf, Quadrat::Local));
+
+    #ifdef _DEBUG
+    m_stats[1].quadrats.push_back(Quadrat(+1, -1, Quadrat::Local));
+    #endif
 
     // создаём меню с параметрами в заголовке окна.
     {

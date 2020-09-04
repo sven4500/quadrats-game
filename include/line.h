@@ -2,6 +2,8 @@
 #ifndef LINE_H_
 #define LINE_H_
 
+#include "quadrat.h"
+
 // Структура хранит информацию о местоположении одной линии.
 struct Line
 {
@@ -18,6 +20,16 @@ struct Line
         origin(origin), orientation(orientation), x(x), y(y)
     {
 
+    }
+
+    Line(Quadrat const& quad, Orientation orientation):
+        orientation(orientation), x(quad.x), y(quad.y)
+    {
+        if(quad.origin == Quadrat::Global)
+            origin = Line::Global;
+        else
+        if(quad.origin == Quadrat::Local)
+            origin = Line::Local;
     }
 
     inline bool isLocal()const

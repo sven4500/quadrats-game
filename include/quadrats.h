@@ -59,12 +59,11 @@ private:
     void paintGameBorder(QPainter& painter)const;
     void paintCurrentQuadrat(QPainter& painter)const;
     void paintCurrentLine(QPainter& painter)const;
-    void paintCorner(QPainter& painter)const; // <= исчезнет после paintCaptured (просто добавляем по два поля каждому).
     void paintPlayerLines(QPainter& painter)const;
     void paintCapturedQuadrats(QPainter& painter)const;
 
     // заполянет один квадрат заданным цветом
-    void drawQuadrat(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
+    void drawQuadrat(QPainter& painter, Quadrat const& quadrat, QColor const& color, Qt::BrushStyle style = Qt::SolidPattern)const;
     void drawLine(QPainter& painter, Line const& line, QColor const& color)const;
     void drawCross(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
     void drawCircle(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;

@@ -64,12 +64,20 @@ void QuadratsGame::paintCapturedQuadrats(QPainter& painter)const
     auto const& quadOne = m_stats[0].quadrats;
 
     for(int i = 0; i < quadOne.size(); ++i)
-        drawCross(painter, quadOne[i], m_stats[0].playerColor);
+    {
+        Quadrat const& quad = quadOne[i];
+        drawQuadrat(painter, quad, m_stats[0].playerColor, Qt::Dense6Pattern);
+        drawCross(painter, quad, m_stats[0].playerColor);
+    }
 
     auto const& quadTwo = m_stats[1].quadrats;
 
     for(int i = 0; i < quadTwo.size(); ++i)
-        drawCircle(painter, quadTwo[i], m_stats[1].playerColor);
+    {
+        Quadrat const& quad = quadTwo[i];
+        drawQuadrat(painter, quad, m_stats[1].playerColor, Qt::Dense6Pattern);
+        drawCircle(painter, quad, m_stats[1].playerColor);
+    }
 }
 
 void QuadratsGame::paintGameBorder(QPainter& painter)const
@@ -148,35 +156,6 @@ void QuadratsGame::paintCurrentLine(QPainter& painter)const
     }
 }
 
-void QuadratsGame::paintCorner(QPainter& painter)const
-{
-    // TODO: нужно удалить этот метод. Игроку просто стоит добавить по два.
-
-    Quadrat quadrats[4];
-
-    {
-        Quadrat const quadrat = getQuadrat(width() / 2, height() / 2);
-        unsigned int const dim2 = m_dim / 2;
-
-        quadrats[0] = quadrat;
-        quadrats[0].x -= dim2;
-
-        quadrats[1] = quadrat;
-        quadrats[1].x += dim2;
-
-        quadrats[2] = quadrat;
-        quadrats[2].y -= dim2;
-
-        quadrats[3] = quadrat;
-        quadrats[3].y += dim2;
-    }
-
-    drawQuadrat(painter, quadrats[0], m_playerOneColor);
-    drawQuadrat(painter, quadrats[1], m_playerOneColor);
-    drawQuadrat(painter, quadrats[2], m_playerTwoColor);
-    drawQuadrat(painter, quadrats[3], m_playerTwoColor);
-}
-
 void QuadratsGame::paintPlayerLines(QPainter& painter)const
 {
     for(int i = 0; i < 2; ++i)
@@ -188,14 +167,17 @@ void QuadratsGame::paintPlayerLines(QPainter& painter)const
     }
 }
 
-void QuadratsGame::drawQuadrat(QPainter& painter, Quadrat const& quadrat, QColor const& color)const
+void QuadratsGame::drawQuadrat(QPainter& painter, Quadrat const& quadrat, QColor const& color, Qt::BrushStyle style)const
 {
     // Если квдрат в локальных координатах тогда сперва преобразуем в глобальные.
-    Quadrat const q = (quadrat.isLocal() == true) ? translateQuadrat(quadrat) : quadrat;
-
+    Quadrat const quad = quadrat.isLocal() ? translateQuadrat(quadrat) : quadrat;
     unsigned int const oneSize = getOneSize();
 
-    painter.fillRect(q.x * oneSize, q.y * oneSize, oneSize, oneSize, color);
+    QBrush brush;
+    brush.setColor(color);
+    brush.setStyle(style);
+
+    painter.fillRect(quad.x * oneSize, quad.y * oneSize, oneSize, oneSize, brush);
 }
 
 void QuadratsGame::drawLine(QPainter& painter, Line const& line, QColor const& color)const

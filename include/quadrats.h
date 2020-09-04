@@ -64,6 +64,8 @@ private:
 
     // заполянет один квадрат заданным цветом
     void drawQuadrat(QPainter& painter, Quadrat const& quadrat, QColor const& color, Qt::BrushStyle style = Qt::SolidPattern)const;
+    void drawQuadratBorders(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
+    void drawCapturedQuadrat(QPainter& painter, Quadrat const&, PlayerEnum player)const;
     void drawLine(QPainter& painter, Line const& line, QColor const& color)const;
     void drawCross(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
     void drawCircle(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;

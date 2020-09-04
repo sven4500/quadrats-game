@@ -65,18 +65,14 @@ void QuadratsGame::paintCapturedQuadrats(QPainter& painter)const
 
     for(int i = 0; i < quadOne.size(); ++i)
     {
-        Quadrat const& quad = quadOne[i];
-        drawQuadrat(painter, quad, m_stats[0].playerColor, Qt::Dense6Pattern);
-        drawCross(painter, quad, m_stats[0].playerColor);
+        drawCapturedQuadrat(painter, quadOne[i], PlayerOne);
     }
 
     auto const& quadTwo = m_stats[1].quadrats;
 
     for(int i = 0; i < quadTwo.size(); ++i)
     {
-        Quadrat const& quad = quadTwo[i];
-        drawQuadrat(painter, quad, m_stats[1].playerColor, Qt::Dense6Pattern);
-        drawCircle(painter, quad, m_stats[1].playerColor);
+        drawCapturedQuadrat(painter, quadTwo[i], PlayerTwo);
     }
 }
 
@@ -167,6 +163,24 @@ void QuadratsGame::paintPlayerLines(QPainter& painter)const
     }
 }
 
+void QuadratsGame::drawCapturedQuadrat(QPainter& painter, Quadrat const& quad, PlayerEnum player)const
+{
+    if(player == PlayerOne)
+    {
+        QColor const col = m_playerOneColor;
+        drawQuadrat(painter, quad, col, Qt::Dense6Pattern);
+        drawCross(painter, quad, col);
+        drawQuadratBorders(painter, quad, col);
+    }
+    else
+    {
+        QColor const col = m_playerTwoColor;
+        drawQuadrat(painter, quad, col, Qt::Dense6Pattern);
+        drawCircle(painter, quad, col);
+        drawQuadratBorders(painter, quad, col);
+    }
+}
+
 void QuadratsGame::drawQuadrat(QPainter& painter, Quadrat const& quadrat, QColor const& color, Qt::BrushStyle style)const
 {
     // Если квдрат в локальных координатах тогда сперва преобразуем в глобальные.
@@ -178,6 +192,27 @@ void QuadratsGame::drawQuadrat(QPainter& painter, Quadrat const& quadrat, QColor
     brush.setStyle(style);
 
     painter.fillRect(quad.x * oneSize, quad.y * oneSize, oneSize, oneSize, brush);
+}
+
+void QuadratsGame::drawQuadratBorders(QPainter& painter, Quadrat const& quad, QColor const& color)const
+{
+    QPen pen;
+    pen.setColor(color);
+    pen.setStyle(Qt::SolidLine);
+
+    painter.setPen(pen);
+    painter.setBrush(Qt::NoBrush);
+
+    Line horzLine(quad, Line::Horizontal);
+    Line vertLine(quad, Line::Vertical);
+
+    drawLine(painter, horzLine, color);
+    horzLine.y -= 1;
+    drawLine(painter, horzLine, color);
+
+    drawLine(painter, vertLine, color);
+    vertLine.x += 1;
+    drawLine(painter, vertLine, color);
 }
 
 void QuadratsGame::drawLine(QPainter& painter, Line const& line, QColor const& color)const

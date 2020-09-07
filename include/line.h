@@ -2,7 +2,8 @@
 #ifndef LINE_H_
 #define LINE_H_
 
-#include "quadrat.h"
+#include <cassert>
+#include <quadrat.h>
 
 // Структура хранит информацию о местоположении одной линии.
 struct Line
@@ -44,6 +45,7 @@ struct Line
 
     inline bool operator==(Line const& other)const
     {
+        assert(origin == other.origin);
         return orientation == other.orientation && x == other.x && y == other.y;
     }
 

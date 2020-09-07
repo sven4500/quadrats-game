@@ -82,6 +82,7 @@ private:
     // Проверяет находится ли квадрат внутри игрового поля.
     bool isInside(Quadrat const& quadrat)const;
     bool isInside(Line const& line)const;
+    bool isPlayerAcquired(Line const& line)const;
 
     // Вектор слоёв отрисовки изображения.
     QVector<PainterFunc> m_painterFuncs;

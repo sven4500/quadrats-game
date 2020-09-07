@@ -251,6 +251,8 @@ void QuadratsGame::drawPlayerInsignia(QPainter& painter, Quadrat const& quad, Pl
     else
     if(player == PlayerTwo)
         drawCircle(painter, quad, m_stats[player].playerColor);
+    else
+        assert(false);
 }
 
 void QuadratsGame::drawCross(QPainter& painter, Quadrat const& quadrat, QColor const& color)const

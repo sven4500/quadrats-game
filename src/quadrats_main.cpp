@@ -9,7 +9,7 @@ QuadratsGame::QuadratsGame(QWidget* parent): QMainWindow(parent)
     m_currentPlayer = PlayerOne;
 
     m_dimFull = 14; // сетка по-умолчанию
-    m_dim = 9;
+    m_dim = m_dimFull * 0.75;
 
     auto dimHalf = m_dim / 2;
 
@@ -74,8 +74,11 @@ QuadratsGame::~QuadratsGame()
 unsigned int QuadratsGame::getOneSize()const
 {
     // игровое поле никогда не должно быть нулевым
-    assert(m_dimFull != 0);
-    return std::min(width(), height()) / m_dimFull;
+    assert(m_dim != 0);
+    assert(m_dimFull >= m_dim);
+
+    int const size = std::min(width(), height());
+    return size / m_dimFull;
 }
 
 Quadrat QuadratsGame::getQuadrat(int x, int y)const
@@ -245,6 +248,12 @@ bool QuadratsGame::isInside(Line const& line)const
     return false;
 }
 
+bool QuadratsGame::isPlayerAcquired(Line const& line)const
+{
+    return m_stats[PlayerOne].contains(line) == true ||
+        m_stats[PlayerTwo].contains(line) == true;
+}
+
 void QuadratsGame::mouseMoveEvent(QMouseEvent* event)
 {
     // Сохраняем последние координаты указателя мыши.
@@ -270,13 +279,18 @@ void QuadratsGame::mousePressEvent(QMouseEvent* event)
 
 void QuadratsGame::mouseReleaseEvent(QMouseEvent* event)
 {
-    Line const line = getLine(event->x(), event->y());
+    Line line = getLine(event->x(), event->y());
 
     if(isInside(line) == true)
     {
-        if(m_stats[m_currentPlayer].contains(line) == false && m_stats[m_currentPlayer].contains(line) == false)
+        // Линию получили в глобальной системе. Храним в относительной поэтому
+        // сперва должны преобразовать.
+        line = translateLine(line);
+
+        if(isPlayerAcquired(line) == false)
         {
-            m_stats[m_currentPlayer].lines.append(translateLine(line));
+            m_stats[m_currentPlayer].lines.append(line);
+            m_currentPlayer = (m_currentPlayer == PlayerOne) ? PlayerTwo : PlayerOne;
         }
     }
 }

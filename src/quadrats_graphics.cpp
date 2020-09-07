@@ -163,6 +163,38 @@ void QuadratsGame::paintPlayerLines(QPainter& painter)const
     }
 }
 
+void QuadratsGame::paintScore(QPainter& painter)const
+{
+    painter.setFont(QFont("Courier New", 16, QFont::Bold));
+
+    drawPlayerScore(painter, PlayerOne);
+    drawPlayerScore(painter, PlayerTwo);
+}
+
+void QuadratsGame::drawPlayerScore(QPainter& painter, PlayerEnum player)const
+{
+    QRect drawRect;
+    int flags = Qt::AlignTop;
+
+    if(player == PlayerOne)
+    {
+        drawRect = QRect(20, 50, 250, 100);
+        flags |= Qt::AlignLeft;
+    }
+    else
+    {
+        drawRect = QRect(width() - 250 - 20, 50, 250, 100);
+        flags |= Qt::AlignRight;
+    }
+
+    QString const scoreText = QString("%1 | %2")
+        .arg(m_stats[player].lines.size())
+        .arg(m_stats[player].quadrats.size());
+
+    painter.setPen(QPen(m_stats[player].playerColor, 1));
+    painter.drawText(drawRect, flags, scoreText, Q_NULLPTR);
+}
+
 void QuadratsGame::drawCapturedQuadrat(QPainter& painter, Quadrat const& quad, PlayerEnum player)const
 {
     QColor const color = m_stats[player].playerColor;

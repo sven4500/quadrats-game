@@ -61,6 +61,7 @@ private:
     void paintCurrentLine(QPainter& painter)const;
     void paintPlayerLines(QPainter& painter)const;
     void paintCapturedQuadrats(QPainter& painter)const;
+    void paintScore(QPainter& painter)const;
 
     // заполянет один квадрат заданным цветом
     void drawQuadrat(QPainter& painter, Quadrat const& quadrat, QColor const& color, Qt::BrushStyle style = Qt::SolidPattern)const;
@@ -70,6 +71,7 @@ private:
     void drawPlayerInsignia(QPainter& painter, Quadrat const& quadrat, PlayerEnum player)const;
     void drawCross(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
     void drawCircle(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
+    void drawPlayerScore(QPainter& painter, PlayerEnum player)const;
 
     // Возврщает индекс квадрата в глобальной системе координат (относительно
     // левого верхнего угла). Перегружены методы для преобразования квадратов

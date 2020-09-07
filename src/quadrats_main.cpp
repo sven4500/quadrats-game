@@ -51,6 +51,7 @@ QuadratsGame::QuadratsGame(QWidget* parent): QMainWindow(parent)
     m_painterFuncs.append(&paintPlayerLines);
     m_painterFuncs.append(&paintCurrentLine);
     m_painterFuncs.append(&paintGameBorder);
+    m_painterFuncs.append(&paintScore);
 
     setMouseTracking(true);
 

@@ -71,13 +71,19 @@ private:
     void drawCross(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
     void drawCircle(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
 
-    // Возврщает индекс квадрата в глобальной системе координат (относительно левого верхнего угла).
-    Quadrat getQuadrat(int x, int y)const;
-    Quadrat translateQuadrat(Quadrat const& quadrat)const;
+    // Возврщает индекс квадрата в глобальной системе координат (относительно
+    // левого верхнего угла). Перегружены методы для преобразования квадратов
+    // между системами координат.
+    Quadrat getQuadratGlobal(int x, int y)const;
+    Quadrat toLocal(Quadrat const& quadrat)const;
+    Quadrat toGlobal(Quadrat const& quadrat)const;
 
-    // Возврщает линию квадрата в глобальной системе координат (относительно левого верхнего угла).
-    Line getLine(int x, int y)const;
-    Line translateLine(Line const& line)const;
+    // Возврщает линию квадрата в глобальной системе координат (относительно
+    // левого верхнего угла). Перегружены два метода для преобразования линии в
+    // глобальную и относительную системы координат.
+    Line getLineGlobal(int x, int y)const;
+    Line toLocal(Line const& line)const;
+    Line toGlobal(Line const& line)const;
 
     // Проверяет находится ли квадрат внутри игрового поля.
     bool isInside(Quadrat const& quadrat)const;

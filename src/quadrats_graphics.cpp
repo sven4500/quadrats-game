@@ -134,7 +134,7 @@ void QuadratsGame::paintGameBorder(QPainter& painter)const
 
 void QuadratsGame::paintCurrentQuadrat(QPainter& painter)const
 {
-    Quadrat const quadrat = getQuadrat(m_x, m_y);
+    Quadrat const quadrat = getQuadratGlobal(m_x, m_y);
 
     if(isInside(quadrat) == true)
     {
@@ -144,7 +144,7 @@ void QuadratsGame::paintCurrentQuadrat(QPainter& painter)const
 
 void QuadratsGame::paintCurrentLine(QPainter& painter)const
 {
-    Line const line = getLine(m_x, m_y);
+    Line const line = getLineGlobal(m_x, m_y);
 
     if(isInside(line) == true)
     {
@@ -173,8 +173,7 @@ void QuadratsGame::drawCapturedQuadrat(QPainter& painter, Quadrat const& quad, P
 
 void QuadratsGame::drawQuadrat(QPainter& painter, Quadrat const& quadrat, QColor const& color, Qt::BrushStyle style)const
 {
-    // Если квдрат в локальных координатах тогда сперва преобразуем в глобальные.
-    Quadrat const quad = quadrat.isLocal() ? translateQuadrat(quadrat) : quadrat;
+    Quadrat const quad = toGlobal(quadrat);
     unsigned int const oneSize = getOneSize();
 
     QBrush brush;
@@ -209,8 +208,7 @@ void QuadratsGame::drawLine(QPainter& painter, Line const& line, QColor const& c
 {
     //qDebug() << line.x << line.y << "\n";
 
-    // Если линия в локальных координатах то преобразуем в глобальные.
-    Line const l = (line.isLocal() == true) ? translateLine(line) : line;
+    Line const l = toGlobal(line);
 
     //qDebug() << l.x << l.y << "\n\n";
 
@@ -262,7 +260,7 @@ void QuadratsGame::drawCross(QPainter& painter, Quadrat const& quadrat, QColor c
     unsigned int const margin = oneSize * 0.25;
     unsigned int const size = oneSize - margin * 2;
 
-    Quadrat const translated = translateQuadrat(quadrat);
+    Quadrat const translated = toGlobal(quadrat);
 
     QRect const rect(translated.x * oneSize + margin + 1, translated.y * oneSize + margin + 1, size, size);
 
@@ -287,7 +285,7 @@ void QuadratsGame::drawCircle(QPainter& painter, Quadrat const& quadrat, QColor 
     unsigned int const margin = oneSize * 0.25;
     unsigned int const size = oneSize - margin * 2;
 
-    Quadrat const translated = translateQuadrat(quadrat);
+    Quadrat const translated = toGlobal(quadrat);
 
     QRect const rect(translated.x * oneSize + margin + 1, translated.y * oneSize + margin + 1, size - 1, size - 1);
 

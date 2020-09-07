@@ -148,7 +148,7 @@ void QuadratsGame::paintCurrentLine(QPainter& painter)const
 
     if(isInside(line) == true)
     {
-        drawLine(painter, line, m_playerOneColor);
+        drawLine(painter, line, m_stats[m_currentPlayer].playerColor);
     }
 }
 
@@ -165,20 +165,10 @@ void QuadratsGame::paintPlayerLines(QPainter& painter)const
 
 void QuadratsGame::drawCapturedQuadrat(QPainter& painter, Quadrat const& quad, PlayerEnum player)const
 {
-    if(player == PlayerOne)
-    {
-        QColor const col = m_playerOneColor;
-        drawQuadrat(painter, quad, col, Qt::Dense6Pattern);
-        drawCross(painter, quad, col);
-        drawQuadratBorders(painter, quad, col);
-    }
-    else
-    {
-        QColor const col = m_playerTwoColor;
-        drawQuadrat(painter, quad, col, Qt::Dense6Pattern);
-        drawCircle(painter, quad, col);
-        drawQuadratBorders(painter, quad, col);
-    }
+    QColor const color = m_stats[player].playerColor;
+    drawQuadrat(painter, quad, color, Qt::Dense6Pattern);
+    drawPlayerInsignia(painter, quad, player);
+    drawQuadratBorders(painter, quad, color);
 }
 
 void QuadratsGame::drawQuadrat(QPainter& painter, Quadrat const& quadrat, QColor const& color, Qt::BrushStyle style)const
@@ -252,6 +242,15 @@ void QuadratsGame::drawLine(QPainter& painter, Line const& line, QColor const& c
         assert(false);
         break;
     };
+}
+
+void QuadratsGame::drawPlayerInsignia(QPainter& painter, Quadrat const& quad, PlayerEnum player)const
+{
+    if(player == PlayerOne)
+        drawCross(painter, quad, m_stats[player].playerColor);
+    else
+    if(player == PlayerTwo)
+        drawCircle(painter, quad, m_stats[player].playerColor);
 }
 
 void QuadratsGame::drawCross(QPainter& painter, Quadrat const& quadrat, QColor const& color)const

@@ -67,6 +67,7 @@ private:
     void drawQuadratBorders(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
     void drawCapturedQuadrat(QPainter& painter, Quadrat const&, PlayerEnum player)const;
     void drawLine(QPainter& painter, Line const& line, QColor const& color)const;
+    void drawPlayerInsignia(QPainter& painter, Quadrat const& quadrat, PlayerEnum player)const;
     void drawCross(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
     void drawCircle(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
 
@@ -85,15 +86,14 @@ private:
     // Вектор слоёв отрисовки изображения.
     QVector<PainterFunc> m_painterFuncs;
 
-    QColor m_playerOneColor;
-    QColor m_playerTwoColor;
-
     QTimer* m_timer;
 
     Player m_stats[2];
     PlayerEnum m_currentPlayer;
+
     unsigned int m_dimFull; // размер игрового поля с учётом отступов
     unsigned int m_dim; // размер реального игрового поля
+
     int m_x;
     int m_y;
 

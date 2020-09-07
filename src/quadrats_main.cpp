@@ -8,15 +8,12 @@ QuadratsGame::QuadratsGame(QWidget* parent): QMainWindow(parent)
 {
     m_currentPlayer = PlayerOne;
 
-    m_playerOneColor = QColor(0, 162, 232);
-    m_playerTwoColor = QColor(237, 28, 36);
-
     m_dimFull = 14; // сетка по-умолчанию
     m_dim = 9;
 
     auto dimHalf = m_dim / 2;
 
-    m_stats[0].playerColor = m_playerOneColor;
+    m_stats[0].playerColor = QColor(0, 162, 232);
     m_stats[0].quadrats.push_back(Quadrat(-dimHalf, 0, Quadrat::Local));
     m_stats[0].quadrats.push_back(Quadrat(+dimHalf, 0, Quadrat::Local));
 
@@ -24,7 +21,7 @@ QuadratsGame::QuadratsGame(QWidget* parent): QMainWindow(parent)
     m_stats[0].quadrats.push_back(Quadrat(-1, +1, Quadrat::Local));
     #endif
 
-    m_stats[1].playerColor = m_playerTwoColor;
+    m_stats[1].playerColor = QColor(237, 28, 36);
     m_stats[1].quadrats.push_back(Quadrat(0, -dimHalf, Quadrat::Local));
     m_stats[1].quadrats.push_back(Quadrat(0, +dimHalf, Quadrat::Local));
 

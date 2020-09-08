@@ -538,7 +538,7 @@ void QuadratsGame::paintPlayerLines(QPainter& painter)const
 
 void QuadratsGame::paintScore(QPainter& painter)const
 {
-    painter.setFont(QFont("Courier New", 16, QFont::Bold));
+    painter.setFont(QFont("Courier New", 16, QFont::Normal));
 
     drawPlayerScore(painter, PlayerOne);
     drawPlayerScore(painter, PlayerTwo);
@@ -546,26 +546,48 @@ void QuadratsGame::paintScore(QPainter& painter)const
 
 void QuadratsGame::drawPlayerScore(QPainter& painter, PlayerEnum player)const
 {
-    QRect drawRect;
+    QPoint const corner(30, 30);
+
+    // Используем статические переменные которые будут хранить необходимый
+    // размер для отрисовки всего текста на экране. Это значение получаем после
+    // вызова метода drawText поэтому первый кадр будет не совсем удачный (но
+    // это не заметно).
+    static QRect br1(corner, QSize());
+    static QRect br2(corner, QSize());
+
+    QRect* drawRect = 0;
+
     int flags = Qt::AlignTop;
 
     if(player == PlayerOne)
     {
-        drawRect = QRect(20, 50, 250, 100);
+        drawRect = &br1;
+
         flags |= Qt::AlignLeft;
     }
     else
     {
-        drawRect = QRect(width() - 250 - 20, 50, 250, 100);
+        drawRect = &br2;
+
+        drawRect->setLeft(width() - drawRect->width() - corner.x());
+        drawRect->setRight(width() - corner.x());
+
         flags |= Qt::AlignRight;
     }
+
+    assert(drawRect != nullptr);
 
     QString const scoreText = QString("%1 | %2")
         .arg(m_stats[player].lines.size())
         .arg(m_stats[player].quadrats.size());
 
-    painter.setPen(QPen(m_stats[player].playerColor, 1));
-    painter.drawText(drawRect, flags, scoreText, Q_NULLPTR);
+    QRect const marginRect = drawRect->adjusted(-5, -5, 5, 5);
+
+    painter.setPen(QPen(m_stats[player].playerColor, 2, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
+    painter.setBrush(QBrush(Qt::white, Qt::SolidPattern));
+
+    painter.drawRect(marginRect);
+    painter.drawText(*drawRect, flags, scoreText, drawRect);
 }
 
 void QuadratsGame::drawCapturedQuadrat(QPainter& painter, Quadrat const& quad, PlayerEnum player)const

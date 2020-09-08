@@ -29,13 +29,7 @@ public:
 
 private:
 
-    enum PlayerEnum{PlayerOne = 0, PlayerTwo = 1};
-
-    /*enum{BACK_COL = 0, LINE_COL, ACTLINE_COL, P1LINE_COL, P2LINE_COL};
-    QColor const sm_colorProfile[] = {
-        QColor(250, 254, 255), // BACK_COL
-        QColor()
-    };*/
+    enum PlayerEnum{PlayerOne = 0, PlayerTwo = 1, P1 = 0, P2 = 1};
 
     // Тип функции которая используется для отрисовки одного слоя изображения.
     typedef void (QuadratsGame::* PainterFunc)(QPainter&)const;
@@ -49,6 +43,8 @@ private:
     virtual void mousePressEvent(QMouseEvent* event);
     virtual void mouseReleaseEvent(QMouseEvent* event);
     virtual void wheelEvent(QWheelEvent* event);
+
+    void addInitialStats();
 
     unsigned int getOneSize()const; // возвращает рзмер одного квдрт в пикселях
 
@@ -94,13 +90,17 @@ private:
     // Вектор слоёв отрисовки изображения.
     QVector<PainterFunc> m_painterFuncs;
 
-    QTimer* m_timer;
+    QTimer m_timer;
 
     PlayerStats m_stats[2];
     PlayerEnum m_currentPlayer;
 
-    unsigned int m_dimFull; // размер игрового поля с учётом отступов
-    unsigned int m_dim; // размер реального игрового поля
+    // Размер игрового поля с учётом отступов и размер игрового поля. Имеется
+    // ограничение. Размер игрового поля с отступами должен быть чётным, а
+    // размер игрового поля нечётным. Также значение m_dimFull должно всегда
+    // быть больше либо равено m_dim.
+    int m_dimFull;
+    int m_dim;
 
     int m_x;
     int m_y;

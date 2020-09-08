@@ -4,26 +4,18 @@
 QColor const QuadratsGame::sm_backgroundColor = QColor(250, 254, 254);
 QColor const QuadratsGame::sm_gridColor = QColor(172, 222, 254);
 
-QuadratsGame::QuadratsGame(QWidget* parent): QMainWindow(parent)
+QuadratsGame::QuadratsGame(QWidget* parent):
+    QMainWindow(parent), m_timer(this)
 {
     m_currentPlayer = PlayerOne;
 
-    m_dimFull = 14;
-
     // Размер игрового пространства должен быть всегда меньше полного размера
     // пространства. Также игровое поле должно быть нечётным поэтому | 1.
+    m_dimFull = 14;
     m_dim = m_dimFull * 0.75;
     m_dim |= 1;
 
-    auto dimHalf = m_dim / 2;
-
-    m_stats[0].playerColor = QColor(0, 162, 232);
-    m_stats[0].quadrats.push_back(Quadrat(-dimHalf, 0, Quadrat::Local));
-    m_stats[0].quadrats.push_back(Quadrat(+dimHalf, 0, Quadrat::Local));
-
-    m_stats[1].playerColor = QColor(237, 28, 36);
-    m_stats[1].quadrats.push_back(Quadrat(0, -dimHalf, Quadrat::Local));
-    m_stats[1].quadrats.push_back(Quadrat(0, +dimHalf, Quadrat::Local));
+    addInitialStats();
 
     //QMenuBar* const menu = menuBar();
     //menu->addAction("Создать");
@@ -54,15 +46,42 @@ QuadratsGame::QuadratsGame(QWidget* parent): QMainWindow(parent)
 
     setWindowTitle(windowTitle);
 
-    // Создаём таймер который раз в 35 мс будет вызывать метод для обновления рабочей области окна.
-    m_timer = new QTimer(this);
-    connect(m_timer, &QTimer::timeout, this, static_cast<void (QWidget::*)()>(&QWidget::update));
-    m_timer->start(35);
+    connect(&m_timer, &QTimer::timeout, this, static_cast<void (QWidget::*)()>(&QWidget::update));
+    m_timer.setInterval(50);
+    m_timer.start();
 }
 
 QuadratsGame::~QuadratsGame()
 {
-    //m_timer->stop();
+    m_timer.stop();
+}
+
+void QuadratsGame::addInitialStats()
+{
+    auto dimHalf = m_dim / 2;
+
+    // В начале игры оба игрока имеют по два захваченных квадрата на вершинах.
+    Quadrat const leftQuad{-dimHalf, 0, Quadrat::Local},
+        rightQuad{dimHalf, 0, Quadrat::Local},
+        upperQuad{0, -dimHalf, Quadrat::Local},
+        lowerQuad{0, dimHalf, Quadrat::Local};
+
+    Line const leftLine{leftQuad, Line::Left},
+        rightLine{rightQuad, Line::Right},
+        upperLine{upperQuad, Line::Up},
+        lowerLine{lowerQuad, Line::Down};
+
+    m_stats[P1].playerColor = QColor(0, 162, 232);
+    m_stats[P1].quadrats.push_back(upperQuad);
+    m_stats[P1].quadrats.push_back(lowerQuad);
+    m_stats[P1].lines.push_back(upperLine);
+    m_stats[P1].lines.push_back(lowerLine);
+
+    m_stats[P2].playerColor = QColor(237, 28, 36);
+    m_stats[P2].quadrats.push_back(leftQuad);
+    m_stats[P2].quadrats.push_back(rightQuad);
+    m_stats[P2].lines.push_back(leftLine);
+    m_stats[P2].lines.push_back(rightLine);
 }
 
 unsigned int QuadratsGame::getOneSize()const

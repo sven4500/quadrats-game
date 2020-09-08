@@ -5,10 +5,8 @@ QColor const QuadratsGame::sm_backgroundColor = QColor(250, 254, 254);
 QColor const QuadratsGame::sm_gridColor = QColor(172, 222, 254);
 
 QuadratsGame::QuadratsGame(QWidget* parent):
-    QMainWindow(parent), m_timer(this)
+    QMainWindow(parent), m_timer(this), m_currentPlayer(PlayerOne)
 {
-    m_currentPlayer = PlayerOne;
-
     // Размер игрового пространства должен быть всегда меньше полного размера
     // пространства. Также игровое поле должно быть нечётным поэтому | 1.
     m_dimFull = 14;
@@ -16,6 +14,7 @@ QuadratsGame::QuadratsGame(QWidget* parent):
     m_dim |= 1;
 
     addInitialStats();
+    addPaintRoutines();
 
     //QMenuBar* const menu = menuBar();
     //menu->addAction("Создать");
@@ -23,16 +22,6 @@ QuadratsGame::QuadratsGame(QWidget* parent):
     //menu->addAction("Настройки");
     //menu->addAction("Как играть");
     //menu->addAction("О программе");
-
-    // Формируем список методов для отрисовки в порядке добавления.
-    m_painterFuncs.append(&paintBackgroud);
-    m_painterFuncs.append(&paintCurrentQuadrat);
-    m_painterFuncs.append(&paintGrid);
-    m_painterFuncs.append(&paintCapturedQuadrats);
-    m_painterFuncs.append(&paintPlayerLines);
-    m_painterFuncs.append(&paintCurrentLine);
-    m_painterFuncs.append(&paintGameBorder);
-    m_painterFuncs.append(&paintScore);
 
     setMouseTracking(true);
 
@@ -82,6 +71,19 @@ void QuadratsGame::addInitialStats()
     m_stats[P2].quadrats.push_back(rightQuad);
     m_stats[P2].lines.push_back(leftLine);
     m_stats[P2].lines.push_back(rightLine);
+}
+
+void QuadratsGame::addPaintRoutines()
+{
+    // Формируем список методов для отрисовки в порядке добавления.
+    m_painterFuncs.append(&paintBackgroud);
+    m_painterFuncs.append(&paintCurrentQuadrat);
+    m_painterFuncs.append(&paintGrid);
+    m_painterFuncs.append(&paintCapturedQuadrats);
+    m_painterFuncs.append(&paintPlayerLines);
+    m_painterFuncs.append(&paintCurrentLine);
+    m_painterFuncs.append(&paintGameBorder);
+    m_painterFuncs.append(&paintScore);
 }
 
 unsigned int QuadratsGame::getOneSize()const
@@ -269,6 +271,12 @@ bool QuadratsGame::isInside(Line const& line)const
     return false;
 }
 
+bool QuadratsGame::tryToEnclose(Line const& line)
+{
+    Q_UNUSED(line);
+    return false;
+}
+
 bool QuadratsGame::isPlayerAcquired(Line const& line)const
 {
     return m_stats[PlayerOne].contains(line) == true ||
@@ -313,7 +321,11 @@ void QuadratsGame::mouseReleaseEvent(QMouseEvent* event)
         if(isPlayerAcquired(line) == false)
         {
             m_stats[m_currentPlayer].lines.append(line);
-            m_currentPlayer = (m_currentPlayer == PlayerOne) ? PlayerTwo : PlayerOne;
+
+            // Попадаем внутрь функции которая проверяет закрывает добавленная
+            // линия квадрат или нет.
+            if(tryToEnclose(line) == false)
+                m_currentPlayer = (m_currentPlayer == PlayerOne) ? PlayerTwo : PlayerOne;
         }
     }
 }

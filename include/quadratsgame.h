@@ -44,10 +44,6 @@ private:
     virtual void mouseReleaseEvent(QMouseEvent* event);
     virtual void wheelEvent(QWheelEvent* event);
 
-    void addInitialStats();
-
-    unsigned int getOneSize()const; // возвращает рзмер одного квдрт в пикселях
-
     // Список методов отрисовки слоёв изображения.
     void paintBackgroud(QPainter& painter)const;
     void paintGrid(QPainter& painter)const;
@@ -81,6 +77,14 @@ private:
     Line getLineGlobal(int x, int y)const;
     Line toLocal(Line const& line)const;
     Line toGlobal(Line const& line)const;
+
+    void addInitialStats();
+    void addPaintRoutines();
+
+    // Возвращает рзмер одного квдрта в пикселях.
+    unsigned int getOneSize()const;
+
+    bool tryToEnclose(Line const& line);
 
     // Проверяет находится ли квадрат внутри игрового поля.
     bool isInside(Quadrat const& quadrat)const;

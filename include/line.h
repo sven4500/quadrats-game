@@ -10,6 +10,7 @@ struct Line
 {
     enum Origin{Local = 0, Global};
     enum Orientation{Horizontal = 0, Vertical};
+    enum Position{Up = 0, Down, Left, Right};
 
     Line():
         origin(Global), orientation(Vertical), x(0), y(0)
@@ -31,6 +32,28 @@ struct Line
         else
         if(quad.origin == Quadrat::Local)
             origin = Line::Local;
+    }
+
+    Line(Quadrat const& quad, Position pos):
+        x(quad.x), y(quad.y)
+    {
+        if(quad.origin == Quadrat::Global)
+            origin = Line::Global;
+        else
+        if(quad.origin == Quadrat::Local)
+            origin = Line::Local;
+
+        if(pos == Line::Up || pos == Line::Down)
+            orientation = Line::Horizontal;
+        else
+        if(pos == Line::Left || pos == Line::Right)
+            orientation = Line::Vertical;
+
+        if(pos == Line::Down)
+            y -= 1;
+        else
+        if(pos == Line::Left)
+            x += 1;
     }
 
     inline bool isLocal()const

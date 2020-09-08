@@ -1,14 +1,13 @@
 #pragma once
-#ifndef PLAYER_H_
-#define PLAYER_H_
+#ifndef PLAYERSTATS_H_
+#define PLAYERSTATS_H_
 
 #include <QVector>
 #include <QColor>
 #include <quadrat.h>
 #include <line.h>
 
-// структура хранит ходы одного игрока
-struct Player
+struct PlayerStats
 {
     inline bool contains(Line const& line)const
     {

@@ -31,14 +31,13 @@ INCLUDEPATH += $$INCLUDE_DIR/
 
 SOURCES += \
     $$SRC_DIR/main.cpp \
-    $$SRC_DIR/quadrats_graphics.cpp \
-    $$SRC_DIR/quadrats_main.cpp
+    $$SRC_DIR/quadratsgame.cpp
 
 HEADERS += \
     $$INCLUDE_DIR/quadratsgame.h \
     $$INCLUDE_DIR/quadrat.h \
     $$INCLUDE_DIR/line.h \
-    $$INCLUDE_DIR/player.h \
+    $$INCLUDE_DIR/playerstats.h \
     $$INCLUDE_DIR/version.h
 
 RESOURCES += \

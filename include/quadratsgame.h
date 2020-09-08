@@ -16,11 +16,10 @@
 #include <QTimer>
 #include <quadrat.h>
 #include <line.h>
-#include <player.h>
+#include <playerstats.h>
 
 class QuadratsGame : public QMainWindow
 {
-
     Q_OBJECT
 
 public:
@@ -97,7 +96,7 @@ private:
 
     QTimer* m_timer;
 
-    Player m_stats[2];
+    PlayerStats m_stats[2];
     PlayerEnum m_currentPlayer;
 
     unsigned int m_dimFull; // размер игрового поля с учётом отступов

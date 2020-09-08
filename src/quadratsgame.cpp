@@ -274,8 +274,24 @@ bool QuadratsGame::isInside(Line const& line)const
 
 bool QuadratsGame::tryToEnclose(Line const& line)
 {
-    Q_UNUSED(line);
-    return false;
+    Quadrat const quad = Transform::toQuadrat(line);
+
+    Line const lines[4] = {
+        Transform::toLine(quad, Line::Up),
+        Transform::toLine(quad, Line::Down),
+        Transform::toLine(quad, Line::Left),
+        Transform::toLine(quad, Line::Right)
+    };
+
+    bool isEnclosed = true;
+
+    for(auto const& line: lines)
+        isEnclosed = isEnclosed && (m_stats[P1].contains(line) || m_stats[P2].contains(line));
+
+    if(isEnclosed == true)
+        m_stats[m_currentPlayer].quadrats.append(quad);
+
+    return isEnclosed;
 }
 
 bool QuadratsGame::isPlayerAcquired(Line const& line)const

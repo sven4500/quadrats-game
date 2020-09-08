@@ -40,10 +40,10 @@ struct Line
         return orientation == other.orientation && x == other.x && y == other.y;
     }
 
-    Origin origin;              // Система координат: локальная или глобальная.
-    Orientation orientation;    // Расположение линии: горизонтальное или вертикальное.
-    int x;                      // Координата линии.
-    int y;                      // Координата линии.
+    Origin origin;
+    Orientation orientation;
+    int x;
+    int y;
 
 };
 

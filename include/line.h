@@ -24,38 +24,6 @@ struct Line
 
     }
 
-    Line(Quadrat const& quad, Orientation orientation):
-        orientation(orientation), x(quad.x), y(quad.y)
-    {
-        if(quad.origin == Quadrat::Global)
-            origin = Line::Global;
-        else
-        if(quad.origin == Quadrat::Local)
-            origin = Line::Local;
-    }
-
-    Line(Quadrat const& quad, Position pos):
-        x(quad.x), y(quad.y)
-    {
-        if(quad.origin == Quadrat::Global)
-            origin = Line::Global;
-        else
-        if(quad.origin == Quadrat::Local)
-            origin = Line::Local;
-
-        if(pos == Line::Up || pos == Line::Down)
-            orientation = Line::Horizontal;
-        else
-        if(pos == Line::Left || pos == Line::Right)
-            orientation = Line::Vertical;
-
-        if(pos == Line::Down)
-            y -= 1;
-        else
-        if(pos == Line::Left)
-            x += 1;
-    }
-
     inline bool isLocal()const
     {
         return origin == Local;

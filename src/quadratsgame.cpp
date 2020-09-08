@@ -1,4 +1,5 @@
 #include <quadratsgame.h>
+#include <transform.h>
 #include <version.h>
 
 QColor const QuadratsGame::sm_backgroundColor = QColor(250, 254, 254);
@@ -55,10 +56,10 @@ void QuadratsGame::addInitialStats()
         upperQuad{0, -dimHalf, Quadrat::Local},
         lowerQuad{0, dimHalf, Quadrat::Local};
 
-    Line const leftLine{leftQuad, Line::Left},
-        rightLine{rightQuad, Line::Right},
-        upperLine{upperQuad, Line::Up},
-        lowerLine{lowerQuad, Line::Down};
+    Line const leftLine = Transform::toLine(leftQuad, Line::Left),
+        rightLine = Transform::toLine(rightQuad, Line::Right),
+        upperLine = Transform::toLine(upperQuad, Line::Up),
+        lowerLine = Transform::toLine(lowerQuad, Line::Down);
 
     m_stats[P1].playerColor = QColor(0, 162, 232);
     m_stats[P1].quadrats.push_back(upperQuad);

@@ -272,10 +272,8 @@ bool QuadratsGame::isInside(Line const& line)const
     return false;
 }
 
-bool QuadratsGame::tryToEnclose(Line const& line)
+bool QuadratsGame::tryToEnclose(Quadrat const& quad)const
 {
-    Quadrat const quad = Transform::toQuadrat(line);
-
     Line const lines[4] = {
         Transform::toLine(quad, Line::Up),
         Transform::toLine(quad, Line::Down),
@@ -288,8 +286,37 @@ bool QuadratsGame::tryToEnclose(Line const& line)
     for(auto const& line: lines)
         isEnclosed = isEnclosed && (m_stats[P1].contains(line) || m_stats[P2].contains(line));
 
-    if(isEnclosed == true)
-        m_stats[m_currentPlayer].quadrats.append(quad);
+    return isEnclosed;
+}
+
+bool QuadratsGame::tryToEnclose(Line const& line)
+{
+    Quadrat quad[2];
+
+    if(line.orientation == Line::Horizontal)
+    {
+        quad[0] = Transform::toQuadrat(line, Line::Up);
+        quad[1] = Transform::toQuadrat(line, Line::Down);
+    }
+    else
+    {
+        quad[0] = Transform::toQuadrat(line, Line::Left);
+        quad[1] = Transform::toQuadrat(line, Line::Right);
+    }
+
+    bool isEnclosed = false;
+
+    if(tryToEnclose(quad[0]) == true)
+    {
+        m_stats[m_currentPlayer].quadrats.append(quad[0]);
+        isEnclosed = true;
+    }
+
+    if(tryToEnclose(quad[1]) == true)
+    {
+        m_stats[m_currentPlayer].quadrats.append(quad[1]);
+        isEnclosed = true;
+    }
 
     return isEnclosed;
 }
@@ -311,18 +338,6 @@ void QuadratsGame::mouseMoveEvent(QMouseEvent* event)
 void QuadratsGame::mousePressEvent(QMouseEvent* event)
 {
     Q_UNUSED(event);
-
-    #ifdef _DEBUG
-    {
-        Line line;
-
-        line = getLineGlobal(m_x, m_y);
-        qDebug() << line.x << line.y;
-
-        line = toLocal(line);
-        qDebug() << line.x << line.y;
-    }
-    #endif
 }
 
 void QuadratsGame::mouseReleaseEvent(QMouseEvent* event)

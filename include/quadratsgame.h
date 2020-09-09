@@ -84,6 +84,7 @@ private:
     // Возвращает рзмер одного квдрта в пикселях.
     unsigned int getOneSize()const;
 
+    bool tryToEnclose(Quadrat const& quadrat)const;
     bool tryToEnclose(Line const& line);
 
     // Проверяет находится ли квадрат внутри игрового поля.

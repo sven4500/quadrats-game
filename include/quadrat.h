@@ -33,6 +33,7 @@ struct Quadrat
 
     inline bool operator==(Quadrat const& other)const
     {
+        assert(origin == other.origin);
         return x == other.x && y == other.y;
     }
 

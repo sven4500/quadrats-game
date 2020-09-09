@@ -534,7 +534,9 @@ void QuadratsGame::paintCurrentLine(QPainter& painter)const
 {
     Line const line = getLineGlobal(m_x, m_y);
 
-    if(isInside(line) == true)
+    PlayerEnum const otherPlayer = (m_currentPlayer == P1) ? P2 : P1;
+
+    if(m_stats[otherPlayer].contains(toLocal(line)) == false && isInside(line) == true)
     {
         drawLine(painter, line, m_stats[m_currentPlayer].playerColor);
     }

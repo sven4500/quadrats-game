@@ -64,6 +64,8 @@ private:
     void drawCircle(QPainter& painter, Quadrat const& quadrat, QColor const& color)const;
     void drawPlayerScore(QPainter& painter, PlayerEnum player)const;
 
+    Quadrat getQuadratCentral()const;
+
     // Возврщает индекс квадрата в глобальной системе координат (относительно
     // левого верхнего угла). Перегружены методы для преобразования квадратов
     // между системами координат.

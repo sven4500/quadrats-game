@@ -8,82 +8,23 @@
 class Transform
 {
 public:
-    static Line toLine(Quadrat const& quad, Line::Orientation orientation)
-    {
-        Line line;
+    static Line toLocal(Line const& line, Quadrat const& central);
+    static Line toGlobal(Line const& line, Quadrat const& central);
 
-        line.x = quad.x;
-        line.y = quad.y;
-        line.orientation = orientation;
+    static Quadrat toLocal(Quadrat const& quad, Quadrat const& central);
+    static Quadrat toGlobal(Quadrat const& quad, Quadrat const& central);
 
-        if(quad.origin == Quadrat::Global)
-            line.origin = Line::Global;
-        else
-        if(quad.origin == Quadrat::Local)
-            line.origin = Line::Local;
-
-        return line;
-    }
-
-    static Line toLine(Quadrat const& quad, Line::Position pos)
-    {
-        Line line;
-
-        line.x = quad.x;
-        line.y = quad.y;
-
-        if(quad.origin == Quadrat::Global)
-            line.origin = Line::Global;
-        else
-        if(quad.origin == Quadrat::Local)
-            line.origin = Line::Local;
-
-        if(pos == Line::Up || pos == Line::Down)
-            line.orientation = Line::Horizontal;
-        else
-        if(pos == Line::Left || pos == Line::Right)
-            line.orientation = Line::Vertical;
-
-        if(pos == Line::Down)
-            line.y -= 1;
-        else
-        if(pos == Line::Left)
-            line.x += 1;
-
-        return line;
-    }
+    static Line toLine(Quadrat const& quad, Line::Orientation orientation);
+    static Line toLine(Quadrat const& quad, Line::Position pos);
 
     // Метод производит преобразование квадрата в линию. Аргумент pos указывает
     // по какую сторону от линии расположить квадрат (в зависимости от
     // расположеия линии горизонтального или вертикального).
-    static Quadrat toQuadrat(Line const& line, Line::Position pos = Line::Down)
-    {
-        Quadrat quad;
-
-        quad.x = line.x;
-        quad.y = line.y;
-
-        if(line.origin == Line::Global)
-            quad.origin = Quadrat::Global;
-        else
-        if(line.origin == Line::Local)
-            quad.origin = Quadrat::Local;
-
-        if(line.orientation == Line::Horizontal && pos == Line::Up)
-            quad.y += 1;
-        else
-        if(line.orientation == Line::Vertical && pos == Line::Left)
-            quad.x -= 1;
-
-        return quad;
-    }
+    static Quadrat toQuadrat(Line const& line, Line::Position pos = Line::Down);
 
 private:
-    Transform()
-    {}
-
-    ~Transform()
-    {}
+    Transform();
+    ~Transform();
 
 };
 

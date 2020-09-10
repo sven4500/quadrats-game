@@ -94,6 +94,11 @@ unsigned int QuadratsGame::getOneSize()const
     return size / m_dimFull;
 }
 
+Quadrat QuadratsGame::getQuadratCentral()const
+{
+    return getQuadratGlobal(width() / 2, height() / 2);
+}
+
 Quadrat QuadratsGame::getQuadratGlobal(int x, int y)const
 {
     unsigned int const oneSize = getOneSize();
@@ -102,32 +107,12 @@ Quadrat QuadratsGame::getQuadratGlobal(int x, int y)const
 
 Quadrat QuadratsGame::toLocal(Quadrat const& quad)const
 {
-    if(quad.origin == Quadrat::Local)
-        return quad;
-
-    Quadrat const cent = getQuadratGlobal(width() / 2, height() / 2);
-    Quadrat quadLocal;
-
-    quadLocal.origin = Quadrat::Origin::Local;
-    quadLocal.x = quad.x - cent.x;
-    quadLocal.y = cent.y - quad.y;
-
-    return quadLocal;
+    return Transform::toLocal(quad, getQuadratCentral());
 }
 
 Quadrat QuadratsGame::toGlobal(Quadrat const& quad)const
 {
-    if(quad.origin == Quadrat::Global)
-        return quad;
-
-    Quadrat const cent = getQuadratGlobal(width() / 2, height() / 2);
-    Quadrat quadGlobal;
-
-    quadGlobal.origin = Quadrat::Origin::Global;
-    quadGlobal.x = quad.x + cent.x;
-    quadGlobal.y = cent.y - quad.y;
-
-    return quadGlobal;
+    return Transform::toGlobal(quad, getQuadratCentral());
 }
 
 Line QuadratsGame::getLineGlobal(int x, int y)const
@@ -191,36 +176,12 @@ Line QuadratsGame::getLineGlobal(int x, int y)const
 
 Line QuadratsGame::toLocal(Line const& line)const
 {
-    if(line.origin == Line::Local)
-        return line;
-
-    Quadrat const quad = getQuadratGlobal(width() / 2, height() / 2);
-
-    Line lineLocal = line;
-
-    lineLocal.origin = Line::Origin::Local;
-    lineLocal.orientation = line.orientation;
-    lineLocal.x = line.x - quad.x;
-    lineLocal.y = quad.y - line.y;
-
-    return lineLocal;
+    return Transform::toLocal(line, getQuadratCentral());
 }
 
 Line QuadratsGame::toGlobal(Line const& line)const
 {
-    if(line.origin == Line::Global)
-        return line;
-
-    Quadrat const quad = getQuadratGlobal(width() / 2, height() / 2);
-
-    Line lineGlobal;
-
-    lineGlobal.origin = Line::Origin::Global;
-    lineGlobal.orientation = line.orientation;
-    lineGlobal.x = line.x + quad.x;
-    lineGlobal.y = quad.y - line.y;
-
-    return lineGlobal;
+    return Transform::toGlobal(line, getQuadratCentral());
 }
 
 bool QuadratsGame::isInside(Quadrat const& quadrat)const

@@ -32,7 +32,8 @@ INCLUDEPATH += $$INCLUDE_DIR/
 
 SOURCES += \
     $$SRC_DIR/main.cpp \
-    $$SRC_DIR/quadratsgame.cpp
+    $$SRC_DIR/quadratsgame.cpp \
+    $$SRC_DIR/transform.cpp
 
 HEADERS += \
     $$INCLUDE_DIR/quadratsgame.h \

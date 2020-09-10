@@ -2,6 +2,8 @@
 #ifndef QUADRAT_H_
 #define QUADRAT_H_
 
+#include <cassert>
+
 // Структура хранит информацию о местоположении одного квадрата.
 struct Quadrat
 {

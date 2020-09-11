@@ -17,6 +17,7 @@
 #include <quadrat.h>
 #include <line.h>
 #include <playerstats.h>
+#include <gamelogic.h>
 
 class QuadratsGame : public QMainWindow
 {
@@ -28,8 +29,7 @@ public:
     ~QuadratsGame();
 
 private:
-
-    enum PlayerEnum{PlayerOne = 0, PlayerTwo = 1, P1 = 0, P2 = 1};
+    typedef GameLogic::Player PlayerEnum;
 
     // Тип функции которая используется для отрисовки одного слоя изображения.
     typedef void (QuadratsGame::* PainterFunc)(QPainter&)const;
@@ -80,28 +80,17 @@ private:
     Line toLocal(Line const& line)const;
     Line toGlobal(Line const& line)const;
 
-    void addInitialStats();
     void addPaintRoutines();
 
     // Возвращает рзмер одного квдрта в пикселях.
     unsigned int getOneSize()const;
 
-    bool tryToEnclose(Quadrat const& quadrat)const;
-    bool tryToEnclose(Line const& line);
-
-    // Проверяет находится ли квадрат внутри игрового поля.
-    bool isInside(Quadrat const& quadrat)const;
-    bool isInside(Line const& line)const;
-    bool isPlayerAcquired(Line const& line)const;
-    bool isGameBorder(Line const& line)const;
+    GameLogic m_logic;
 
     // Вектор слоёв отрисовки изображения.
     QVector<PainterFunc> m_painterFuncs;
 
     QTimer m_timer;
-
-    PlayerStats m_stats[2];
-    PlayerEnum m_currentPlayer;
 
     // Размер игрового поля с учётом отступов и размер игрового поля. Имеется
     // ограничение. Размер игрового поля с отступами должен быть чётным, а

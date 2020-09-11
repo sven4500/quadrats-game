@@ -33,7 +33,8 @@ INCLUDEPATH += $$INCLUDE_DIR/
 SOURCES += \
     $$SRC_DIR/main.cpp \
     $$SRC_DIR/quadratsgame.cpp \
-    $$SRC_DIR/transform.cpp
+    $$SRC_DIR/transform.cpp \
+    $$SRC_DIR/gamelogic.cpp
 
 HEADERS += \
     $$INCLUDE_DIR/quadratsgame.h \
@@ -41,7 +42,8 @@ HEADERS += \
     $$INCLUDE_DIR/line.h \
     $$INCLUDE_DIR/playerstats.h \
     $$INCLUDE_DIR/version.h \
-    $$INCLUDE_DIR/transform.h
+    $$INCLUDE_DIR/transform.h \
+    $$INCLUDE_DIR/gamelogic.h
 
 RESOURCES += \
     $$RESOURCES_DIR/resources.qrc

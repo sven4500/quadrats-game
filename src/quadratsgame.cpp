@@ -245,7 +245,7 @@ bool QuadratsGame::tryToEnclose(Quadrat const& quad)const
     bool isEnclosed = true;
 
     for(auto const& line: lines)
-        isEnclosed = isEnclosed && (m_stats[P1].contains(line) || m_stats[P2].contains(line));
+        isEnclosed = isEnclosed && (m_stats[P1].contains(line) || m_stats[P2].contains(line) || isGameBorder(line));
 
     return isEnclosed;
 }
@@ -286,6 +286,19 @@ bool QuadratsGame::isPlayerAcquired(Line const& line)const
 {
     return m_stats[PlayerOne].contains(line) == true ||
         m_stats[PlayerTwo].contains(line) == true;
+}
+
+bool QuadratsGame::isGameBorder(Line const& line)const
+{
+    assert(m_dim % 2 == 1);
+
+    if(line.orientation == Line::Horizontal)
+        return std::abs(line.x) + std::abs(line.y) == m_dim / 2 + (line.y < 0 ? 1 : 0);
+    else
+    if(line.orientation == Line::Vertical)
+        return std::abs(line.x) + std::abs(line.y) == m_dim / 2 + (line.x > 0 ? 1 : 0);
+    else
+        return false;
 }
 
 void QuadratsGame::mouseMoveEvent(QMouseEvent* event)

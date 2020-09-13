@@ -56,6 +56,11 @@ void GameLogic::addLine(Line const& line)
     }
 }
 
+int GameLogic::dimension()const
+{
+    return _dim;
+}
+
 QVector<Quadrat> const& GameLogic::quadrats(Player player)const
 {
     return _stats[player].quadrats;

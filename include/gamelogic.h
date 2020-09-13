@@ -1,6 +1,6 @@
 #pragma once
-#ifndef GAMELOGIC_H
-#define GAMELOGIC_H
+#ifndef GAMELOGIC_H_
+#define GAMELOGIC_H_
 
 #include <QVector>
 #include <QColor>
@@ -18,6 +18,8 @@ public:
 
     void resetState(int dim);
     void addLine(Line const& line);
+
+    int dimension()const;
 
     QVector<Quadrat> const& quadrats(Player player)const;
     QVector<Line> const& lines(Player player)const;

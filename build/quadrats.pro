@@ -34,7 +34,8 @@ SOURCES += \
     $$SRC_DIR/main.cpp \
     $$SRC_DIR/quadratsgame.cpp \
     $$SRC_DIR/transform.cpp \
-    $$SRC_DIR/gamelogic.cpp
+    $$SRC_DIR/gamelogic.cpp \
+    $$SRC_DIR/imagecomposer.cpp
 
 HEADERS += \
     $$INCLUDE_DIR/quadratsgame.h \
@@ -43,7 +44,8 @@ HEADERS += \
     $$INCLUDE_DIR/playerstats.h \
     $$INCLUDE_DIR/version.h \
     $$INCLUDE_DIR/transform.h \
-    $$INCLUDE_DIR/gamelogic.h
+    $$INCLUDE_DIR/gamelogic.h \
+    $$INCLUDE_DIR/imagecomposer.h
 
 RESOURCES += \
     $$RESOURCES_DIR/resources.qrc

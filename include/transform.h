@@ -8,6 +8,10 @@
 class Transform
 {
 public:
+    static Line getLineGlobal(int x, int y, int oneSize);
+
+    static Quadrat getQuadratGlobal(int x, int y, int oneSize);
+
     static Line toLocal(Line const& line, Quadrat const& central);
     static Line toGlobal(Line const& line, Quadrat const& central);
 

@@ -74,8 +74,7 @@ Quadrat QuadratsGame::getQuadratCentral()const
 
 Quadrat QuadratsGame::getQuadratGlobal(int x, int y)const
 {
-    unsigned int const oneSize = getOneSize();
-    return Quadrat(x / oneSize, y / oneSize);
+    return Transform::getQuadratGlobal(x, y, getOneSize());
 }
 
 Quadrat QuadratsGame::toLocal(Quadrat const& quad)const
@@ -90,61 +89,7 @@ Quadrat QuadratsGame::toGlobal(Quadrat const& quad)const
 
 Line QuadratsGame::getLineGlobal(int x, int y)const
 {
-    Line line;
-    line.origin = Line::Global;
-
-    unsigned int const oneSize = getOneSize();
-
-    unsigned int const ix = x / oneSize;
-    unsigned int const iy = y / oneSize;
-
-    // Расстояния от точки до четырёх границ квадрата: левой, верхней, правой и нижней соответственно.
-    unsigned int const dist[4] = {
-        x % oneSize,
-        y % oneSize,
-        oneSize - dist[0],
-        oneSize - dist[1]
-    };
-
-    unsigned int j = 0;
-
-    // Ищем границу с наименьшим расстоянием до точки.
-    for(unsigned int i = 1; i < 4; ++i)
-    {
-        if(dist[i] < dist[j])
-        {
-            j = i;
-        }
-    }
-
-    switch(j)
-    {
-    case 0:
-        line.orientation = Line::Vertical;
-        line.x = ix;
-        line.y = iy;
-        break;
-    case 1:
-        line.orientation = Line::Horizontal;
-        line.x = ix;
-        line.y = iy;
-        break;
-    case 2:
-        line.orientation = Line::Vertical;
-        line.x = ix + 1;
-        line.y = iy;
-        break;
-    case 3:
-        line.orientation = Line::Horizontal;
-        line.x = ix;
-        line.y = iy + 1;
-        break;
-    default:
-        assert(false);
-        break;
-    }
-
-    return line;
+    return Transform::getLineGlobal(x, y, getOneSize());
 }
 
 Line QuadratsGame::toLocal(Line const& line)const

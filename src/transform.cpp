@@ -6,6 +6,65 @@ Transform::Transform()
 Transform::~Transform()
 {}
 
+Line Transform::getLineGlobal(int x, int y, int oneSize)
+{
+    Line line;
+    line.origin = Line::Global;
+
+    // Расстояния от точки до четырёх границ квадрата: левой, верхней, правой и
+    // нижней соответственно.
+    int const dist[4] = {
+        x % oneSize,
+        y % oneSize,
+        oneSize - dist[0],
+        oneSize - dist[1]
+    };
+
+    auto j = 0;
+
+    // Ищем границу с наименьшим расстоянием до точки.
+    for(auto i = 1; i < 4; ++i)
+        if(dist[i] < dist[j])
+            j = i;
+
+    auto const ix = x / oneSize,
+        iy = y / oneSize;
+
+    switch(j)
+    {
+    case 0:
+        line.orientation = Line::Vertical;
+        line.x = ix;
+        line.y = iy;
+        break;
+    case 1:
+        line.orientation = Line::Horizontal;
+        line.x = ix;
+        line.y = iy;
+        break;
+    case 2:
+        line.orientation = Line::Vertical;
+        line.x = ix + 1;
+        line.y = iy;
+        break;
+    case 3:
+        line.orientation = Line::Horizontal;
+        line.x = ix;
+        line.y = iy + 1;
+        break;
+    default:
+        assert(false);
+        break;
+    }
+
+    return line;
+}
+
+Quadrat Transform::getQuadratGlobal(int x, int y, int oneSize)
+{
+    return Quadrat(x / oneSize, y / oneSize);
+}
+
 Line Transform::toLocal(Line const& line, Quadrat const& cent)
 {
     if(line.origin == Line::Local)

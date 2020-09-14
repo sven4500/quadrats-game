@@ -19,6 +19,12 @@ struct PlayerStats
         return quadrats.contains(quadrat);
     }
 
+    void clear()
+    {
+        lines.clear();
+        quadrats.clear();
+    }
+
     QVector<Line> lines;
     QVector<Quadrat> quadrats;
     QColor playerColor;

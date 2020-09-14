@@ -18,6 +18,7 @@
 #include <playerstats.h>
 #include <gamelogic.h>
 #include <imagecomposer.h>
+#include <settingsdialog.h>
 
 class QuadratsGame: public QMainWindow
 {
@@ -46,7 +47,15 @@ private:
     GameLogic m_logic;
     ImageComposer m_composer;
 
+    SettingsDialog m_settingsDialog;
+
     QTimer m_timer;
+
+    QAction* m_createGameAct;
+    QAction* m_joinGameAct;
+    QAction* m_settingsAct;
+    QAction* m_howToAct;
+    QAction* m_aboutAct;
 
     // Размер игрового поля с учётом отступов и размер игрового поля. Имеется
     // ограничение. Размер игрового поля с отступами должен быть чётным, а

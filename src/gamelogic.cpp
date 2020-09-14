@@ -11,6 +11,9 @@ void GameLogic::resetState(int dim)
 {
     _currentPlayer = Player::P1;
 
+    _stats[P1].clear();
+    _stats[P2].clear();
+
     _dim = dim;
     auto half = dim / 2;
 

@@ -4,7 +4,7 @@
 #include <version.h>
 
 QuadratsGame::QuadratsGame(QWidget* parent):
-    QMainWindow(parent), m_timer(this)
+    QMainWindow(parent), m_settingsDialog(this), m_timer(this)
 {
     // Размер игрового пространства должен быть всегда меньше полного размера
     // пространства. Также игровое поле должно быть нечётным поэтому | 1.
@@ -15,12 +15,22 @@ QuadratsGame::QuadratsGame(QWidget* parent):
     m_logic.resetState(m_dim);
     m_composer.setLogic(&m_logic);
 
-    //QMenuBar* const menu = menuBar();
-    //menu->addAction("Создать");
-    //menu->addAction("Присоединиться");
-    //menu->addAction("Настройки");
-    //menu->addAction("Как играть");
-    //menu->addAction("О программе");
+    QMenuBar* const menu = menuBar();
+
+    m_createGameAct = menu->addAction("Создать");
+    m_createGameAct->setEnabled(false);
+
+    m_joinGameAct = menu->addAction("Присоединиться");
+    m_joinGameAct->setEnabled(false);
+
+    m_settingsAct = menu->addAction("Настройки");
+    connect(m_settingsAct, &QAction::triggered, &m_settingsDialog, &QDialog::exec);
+
+    m_howToAct = menu->addAction("Как играть");
+    m_howToAct->setEnabled(false);
+
+    m_aboutAct = menu->addAction("О программе");
+    m_aboutAct->setEnabled(false);
 
     setMouseTracking(true);
 

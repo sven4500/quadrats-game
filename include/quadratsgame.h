@@ -51,6 +51,7 @@ private:
 
     QTimer m_timer;
 
+    QAction* m_newGameAct;
     QAction* m_createGameAct;
     QAction* m_joinGameAct;
     QAction* m_settingsAct;

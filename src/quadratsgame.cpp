@@ -1,4 +1,5 @@
 #include <cassert>
+#include <QIcon>
 #include <quadratsgame.h>
 #include <transform.h>
 #include <version.h>
@@ -17,20 +18,30 @@ QuadratsGame::QuadratsGame(QWidget* parent):
 
     QMenuBar* const menu = menuBar();
 
-    m_createGameAct = menu->addAction("Создать");
-    m_createGameAct->setEnabled(false);
+    m_newGameAct = menu->addAction("");
+    m_newGameAct->setToolTip("Новая игра");
+    m_newGameAct->setIcon(QIcon(":/new-game.ico"));
 
-    m_joinGameAct = menu->addAction("Присоединиться");
-    m_joinGameAct->setEnabled(false);
+    m_joinGameAct = menu->addAction("");
+    m_joinGameAct->setToolTip("Присоединиться");
+    m_joinGameAct->setIcon(QIcon(":/join.ico"));
 
-    m_settingsAct = menu->addAction("Настройки");
+    m_createGameAct = menu->addAction("");
+    m_createGameAct->setToolTip("Создать игру");
+    m_createGameAct->setIcon(QIcon(":/host.ico"));
+
+    m_settingsAct = menu->addAction("");
+    m_settingsAct->setToolTip("Настройки");
+    m_settingsAct->setIcon(QIcon(":/settings.ico"));
     connect(m_settingsAct, &QAction::triggered, &m_settingsDialog, &QDialog::exec);
 
     m_howToAct = menu->addAction("Как играть");
-    m_howToAct->setEnabled(false);
+    m_howToAct->setToolTip("Как играть");
+    m_howToAct->setIcon(QIcon(":/how-to-play.ico"));
 
-    m_aboutAct = menu->addAction("О программе");
-    m_aboutAct->setEnabled(false);
+    m_aboutAct = menu->addAction("");
+    m_aboutAct->setToolTip("О программе");
+    m_aboutAct->setIcon(QIcon(":/about.ico"));
 
     setMouseTracking(true);
 

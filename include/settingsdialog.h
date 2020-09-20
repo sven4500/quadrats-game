@@ -3,6 +3,10 @@
 #define SETTINGSDIALOG_H_
 
 #include <QDialog>
+#include <QLabel>
+#include <QSpinBox>
+#include <QLineEdit>
+#include <QPushButton>
 
 class SettingsDialog: public QDialog
 {
@@ -11,8 +15,13 @@ public:
     virtual ~SettingsDialog();
 
 protected:
-    int _frameRate;
-    int _dim;
+    QSpinBox* _frameRateSpin;
+    QSpinBox* _dimSpin;
+    QLineEdit* _ipAddrEdit;
+    QLineEdit* _portEdit;
+
+    QPushButton* _okBut;
+    QPushButton* _cancelBut;
 
 };
 

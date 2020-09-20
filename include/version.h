@@ -2,6 +2,6 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-unsigned int const BuildVersion = 1037;
+unsigned int const BuildVersion = 1038;
 
 #endif

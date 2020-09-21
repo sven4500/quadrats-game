@@ -60,3 +60,18 @@ SettingsDialog::SettingsDialog(QWidget* parent):
 
 SettingsDialog::~SettingsDialog()
 {}
+
+int SettingsDialog::getDim()const
+{
+    return _dimSpin->value();
+}
+
+QString SettingsDialog::getIpAddress()const
+{
+    return _ipAddrEdit->text();
+}
+
+uint16_t SettingsDialog::getPort()const
+{
+    return _portEdit->text().toUInt();
+}

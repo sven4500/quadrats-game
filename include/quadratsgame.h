@@ -19,15 +19,19 @@
 #include <gamelogic.h>
 #include <imagecomposer.h>
 #include <settingsdialog.h>
+#include <netcoop.h>
 
 class QuadratsGame: public QMainWindow
 {
     Q_OBJECT
 
 public:
-
     QuadratsGame(QWidget* parent = 0);
     ~QuadratsGame();
+
+private slots:
+    void hostGame();
+    void joinGame();
 
 private:
     typedef GameLogic::Player PlayerEnum;
@@ -47,6 +51,8 @@ private:
     GameLogic m_logic;
     ImageComposer m_composer;
 
+    NetCoop m_netCoop;
+
     SettingsDialog m_settingsDialog;
 
     QTimer m_timer;
@@ -58,6 +64,9 @@ private:
     QAction* m_howToAct;
     QAction* m_aboutAct;
 
+    // Описывает номер игрока. Имеет смысл только когда включена сетевая игра.
+    PlayerEnum m_player;
+
     // Размер игрового поля с учётом отступов и размер игрового поля. Имеется
     // ограничение. Размер игрового поля с отступами должен быть чётным, а
     // размер игрового поля нечётным. Также значение m_dimFull должно всегда
@@ -67,6 +76,8 @@ private:
 
     int m_x;
     int m_y;
+
+    bool m_isNetModeOn;
 
 };
 

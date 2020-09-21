@@ -1,11 +1,13 @@
 #include <cassert>
 #include <QIcon>
+#include <QMessageBox>
 #include <quadratsgame.h>
 #include <transform.h>
 #include <version.h>
 
 QuadratsGame::QuadratsGame(QWidget* parent):
-    QMainWindow(parent), m_settingsDialog(this), m_timer(this)
+    QMainWindow(parent), m_settingsDialog(this), m_timer(this),
+    m_isNetModeOn(false)
 {
     // Размер игрового пространства должен быть всегда меньше полного размера
     // пространства. Также игровое поле должно быть нечётным поэтому | 1.
@@ -25,10 +27,12 @@ QuadratsGame::QuadratsGame(QWidget* parent):
     m_joinGameAct = menu->addAction("");
     m_joinGameAct->setToolTip("Присоединиться");
     m_joinGameAct->setIcon(QIcon(":/join.ico"));
+    connect(m_joinGameAct, &QAction::triggered, this, &QuadratsGame::joinGame);
 
     m_createGameAct = menu->addAction("");
     m_createGameAct->setToolTip("Создать игру");
     m_createGameAct->setIcon(QIcon(":/host.ico"));
+    connect(m_createGameAct, &QAction::triggered, this, &QuadratsGame::hostGame);
 
     m_settingsAct = menu->addAction("");
     m_settingsAct->setToolTip("Настройки");
@@ -65,6 +69,36 @@ QuadratsGame::~QuadratsGame()
     m_timer.stop();
 }
 
+void QuadratsGame::hostGame()
+{
+    m_isNetModeOn = true;
+    m_player = PlayerEnum::P1;
+
+    m_logic.resetState(m_settingsDialog.getDim());
+
+    auto value = m_netCoop.hostGame(m_settingsDialog.getPort());
+
+    if(value == false)
+        QMessageBox::critical(this, "Ошибка", "Не удалось создать игру.");
+    else
+        QMessageBox::information(this, "Успех", "Игра создана!");
+}
+
+void QuadratsGame::joinGame()
+{
+    m_isNetModeOn = true;
+    m_player = PlayerEnum::P2;
+
+    m_logic.resetState(m_settingsDialog.getDim());
+
+    auto value = m_netCoop.joinGame(m_settingsDialog.getIpAddress(), m_settingsDialog.getPort());
+
+    if(value == false)
+        QMessageBox::critical(this, "Ошибка", "Не удалось установить соединение.");
+    else
+        QMessageBox::information(this, "Успех", "Соединение установлено!");
+}
+
 unsigned int QuadratsGame::getOneSize()const
 {
     assert(m_dimFull > 0);
@@ -92,13 +126,16 @@ void QuadratsGame::mousePressEvent(QMouseEvent* event)
 
 void QuadratsGame::mouseReleaseEvent(QMouseEvent* event)
 {
-    Line line = Transform::getLineGlobal(event->x(), event->y(), getOneSize());
+    if(m_isNetModeOn == false || m_logic.currentPlayer() == m_player)
+    {
+        Line line = Transform::getLineGlobal(event->x(), event->y(), getOneSize());
 
-    // Линию получили в глобальной системе. Храним в относительной поэтому
-    // сперва должны преобразовать.
-    line = Transform::toLocal(line, getQuadratCentral());
+        // Линию получили в глобальной системе. Храним в относительной поэтому
+        // сперва должны преобразовать.
+        line = Transform::toLocal(line, getQuadratCentral());
 
-    m_logic.addLine(line);
+        m_logic.addLine(line);
+    }
 }
 
 void QuadratsGame::wheelEvent(QWheelEvent* event)

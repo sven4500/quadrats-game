@@ -1,4 +1,4 @@
-QT += core gui
+QT += core gui network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TEMPLATE = app
@@ -36,7 +36,8 @@ SOURCES += \
     $$SRC_DIR/transform.cpp \
     $$SRC_DIR/gamelogic.cpp \
     $$SRC_DIR/imagecomposer.cpp \
-    $$SRC_DIR/settingsdialog.cpp
+    $$SRC_DIR/settingsdialog.cpp \
+    $$SRC_DIR/netcoop.cpp
 
 HEADERS += \
     $$INCLUDE_DIR/quadratsgame.h \
@@ -47,7 +48,8 @@ HEADERS += \
     $$INCLUDE_DIR/transform.h \
     $$INCLUDE_DIR/gamelogic.h \
     $$INCLUDE_DIR/imagecomposer.h \
-    $$INCLUDE_DIR/settingsdialog.h
+    $$INCLUDE_DIR/settingsdialog.h \
+    $$INCLUDE_DIR/netcoop.h
 
 RESOURCES += \
     $$RESOURCES_DIR/resources.qrc

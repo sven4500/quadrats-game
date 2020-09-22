@@ -17,6 +17,7 @@ QuadratsGame::QuadratsGame(QWidget* parent):
 
     m_logic.resetState(m_dim);
     m_composer.setLogic(&m_logic);
+    connect(&m_netCoop, &NetCoop::dataRead, this, &QuadratsGame::dataReady);
 
     QMenuBar* const menu = menuBar();
 
@@ -99,6 +100,11 @@ void QuadratsGame::joinGame()
         QMessageBox::information(this, "Успех", "Соединение установлено!");
 }
 
+void QuadratsGame::dataReady(Line const& line)
+{
+    m_logic.addLine(line);
+}
+
 unsigned int QuadratsGame::getOneSize()const
 {
     assert(m_dimFull > 0);
@@ -135,6 +141,11 @@ void QuadratsGame::mouseReleaseEvent(QMouseEvent* event)
         line = Transform::toLocal(line, getQuadratCentral());
 
         m_logic.addLine(line);
+
+        if(m_isNetModeOn == true)
+        {
+            m_netCoop.dataWrite(line);
+        }
     }
 }
 

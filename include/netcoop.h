@@ -7,14 +7,22 @@
 #include <QHostAddress>
 #include <QString>
 #include <stdint.h> // uint16_t
+#include <line.h>
 
 class NetCoop: public QObject
 {
     Q_OBJECT
 
+signals:
+    dataRead(Line const& line);
+
 public:
     NetCoop(QObject* parent = 0);
     virtual ~NetCoop();
+
+    void reset();
+
+    void dataWrite(Line const& line);
 
     bool hostGame(uint16_t port);
     bool joinGame(QString const& addr, uint16_t port);

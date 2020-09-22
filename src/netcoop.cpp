@@ -3,7 +3,8 @@
 #include <netcoop.h>
 
 NetCoop::NetCoop(QObject* parent):
-    QObject(parent), _socket(this), _serverPort(0), _clientPort(0),
+    QObject(parent), _socket(this), _serverAddr(QHostAddress::Null),
+    _serverPort(0), _clientAddr(QHostAddress::Null), _clientPort(0),
     _isEstablished(false)
 {
     connect(&_socket, &QUdpSocket::readyRead, this, &NetCoop::readyRead);
@@ -12,6 +13,31 @@ NetCoop::NetCoop(QObject* parent):
 NetCoop::~NetCoop()
 {}
 
+void NetCoop::reset()
+{
+    _socket.close();
+
+    _serverAddr = QHostAddress::Null;
+    _serverPort = 0;
+
+    _clientAddr = QHostAddress::Null;
+    _clientPort = 0;
+
+    _isEstablished = false;
+}
+
+void NetCoop::dataWrite(Line const& line)
+{
+    if(_isServer)
+    {
+        _socket.writeDatagram((char*)&line, sizeof(Line), _clientAddr, _clientPort);
+    }
+    else
+    {
+        _socket.writeDatagram((char*)&line, sizeof(Line), _serverAddr, _serverPort);
+    }
+}
+
 void NetCoop::readyRead()
 {
     if(_isServer == true && _isEstablished == false)
@@ -19,6 +45,8 @@ void NetCoop::readyRead()
         uint32_t dataRead = -1,
             dataSend = 0;
 
+        // До установления соединения IP адрес клиента не известен поэтому на
+        // первом пакете сохраняем адрес и номер порта клиента.
         _socket.readDatagram((char*)&dataRead, sizeof(uint32_t), &_clientAddr, &_clientPort);
 
         dataSend = dataRead + 1;
@@ -27,8 +55,13 @@ void NetCoop::readyRead()
 
         _isEstablished = true;
     }
+    else
+    {
+        Line line;
+        _socket.readDatagram((char*)&line, sizeof(Line));
 
-    // TODO: здесь логика приёма данных.
+        emit dataRead(line);
+    }
 }
 
 bool NetCoop::hostGame(uint16_t port)
@@ -68,5 +101,6 @@ bool NetCoop::joinGame(QString const& addr, uint16_t port)
     _socket.readDatagram((char*)&dataRead, sizeof(uint32_t));
     _socket.blockSignals(false);
 
-    return dataRead == dataExpt;
+    _isEstablished = dataRead == dataExpt;
+    return _isEstablished;
 }

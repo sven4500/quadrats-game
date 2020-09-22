@@ -33,6 +33,8 @@ private slots:
     void hostGame();
     void joinGame();
 
+    void dataReady(Line const& line);
+
 private:
     typedef GameLogic::Player PlayerEnum;
 

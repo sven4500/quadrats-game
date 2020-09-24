@@ -82,8 +82,8 @@ void QuadratsGame::setDim(int dim)
 
     // Размер игрового пространства с учётом рамок больше ращмера игрового поля,
     // а также чётный.
-    m_dimFull = (m_dim + 1) * 1.25;
-    m_dimFull &= -2;
+    m_dimFull = m_dim * 1.25;
+    m_dimFull |= 1;
 
     m_logic.resetState(m_dim);
 }
@@ -170,21 +170,21 @@ void QuadratsGame::mouseReleaseEvent(QMouseEvent* event)
 void QuadratsGame::wheelEvent(QWheelEvent* event)
 {
     assert(m_dimFull >= m_dim);
-    assert(m_dimFull % 2 == 0);
     assert(m_dim % 2 == 1);
+    assert(m_dimFull % 2 == 1);
 
     QPoint const angle = event->angleDelta();
 
     if(angle.y() > 0)
     {
-        if(m_dimFull > m_dim + 1)
+        if(m_dimFull > m_dim + 2)
         {
             m_dimFull -= 2;
         }
     }
     else if(angle.y() < 0)
     {
-        if(m_dimFull < m_dim * 2)
+        if(m_dimFull < m_dim * 1.5)
         {
             m_dimFull += 2;
         }

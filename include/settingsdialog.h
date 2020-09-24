@@ -16,7 +16,7 @@ public:
     virtual ~SettingsDialog();
 
     int getDim()const;
-
+    int getFPS()const;
     QString getIpAddress()const;
     uint16_t getPort()const;
 

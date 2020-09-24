@@ -26,9 +26,11 @@ SettingsDialog::SettingsDialog(QWidget* parent):
 
     _okBut = new QPushButton(this);
     _okBut->setText("ОК");
+    connect(_okBut, &QPushButton::clicked, this, &QDialog::accept);
 
     _cancelBut = new QPushButton(this);
     _cancelBut->setText("Отмена");
+    connect(_cancelBut, &QPushButton::clicked, this, &QDialog::reject);
 
     QLabel* const label[4] = {
         new QLabel("Частота кадров", this),
@@ -64,6 +66,11 @@ SettingsDialog::~SettingsDialog()
 int SettingsDialog::getDim()const
 {
     return _dimSpin->value();
+}
+
+int SettingsDialog::getFPS()const
+{
+    return _frameRateSpin->value();
 }
 
 QString SettingsDialog::getIpAddress()const

@@ -52,6 +52,8 @@ private:
     // Возвращает рзмер одного квдрта в пикселях.
     unsigned int getOneSize()const;
 
+    static QString const m_windowTitle;
+
     GameLogic m_logic;
     ImageComposer m_composer;
 

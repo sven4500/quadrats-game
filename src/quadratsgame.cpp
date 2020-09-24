@@ -5,11 +5,17 @@
 #include <transform.h>
 #include <version.h>
 
+#ifdef _DEBUG
+QString const QuadratsGame::m_windowTitle = QString("Квадраты (сборка %1 отладка)").arg(BuildVersion);
+#else
+QString const QuadratsGame::m_windowTitle = QString("Квадраты (сборка %1)").arg(BuildVersion);
+#endif
+
 QuadratsGame::QuadratsGame(QWidget* parent):
     QMainWindow(parent), m_settingsDialog(this), m_timer(this),
     m_isNetModeOn(false)
 {
-    setDim(11);
+    setDim(m_settingsDialog.getDim());
 
     m_composer.setLogic(&m_logic);
     connect(&m_netCoop, &NetCoop::dataRead, this, &QuadratsGame::dataReady);
@@ -45,21 +51,12 @@ QuadratsGame::QuadratsGame(QWidget* parent):
     m_aboutAct->setToolTip("О программе");
     m_aboutAct->setIcon(QIcon(":/about.ico"));
 
-    setMouseTracking(true);
-
-    QString const windowTitle = QString(
-        #ifdef _DEBUG
-        "Квадраты (сборка %1 отладка)"
-        #else
-        "Квадраты (сборка %1)"
-        #endif
-        ).arg(BuildVersion);
-
-    setWindowTitle(windowTitle);
-
     connect(&m_timer, &QTimer::timeout, this, static_cast<void (QWidget::*)()>(&QWidget::update));
     m_timer.setInterval(50);
     m_timer.start();
+
+    setMouseTracking(true);
+    setWindowTitle(m_windowTitle);
 }
 
 QuadratsGame::~QuadratsGame()

@@ -32,8 +32,8 @@ public:
 private slots:
     void hostGame();
     void joinGame();
-
     void dataReady(Line const& line);
+    void applySettings();
 
 private:
     typedef GameLogic::Player PlayerEnum;
@@ -44,6 +44,8 @@ private:
     virtual void mousePressEvent(QMouseEvent* event);
     virtual void mouseReleaseEvent(QMouseEvent* event);
     virtual void wheelEvent(QWheelEvent* event);
+
+    void setDim(int dim);
 
     Quadrat getQuadratCentral()const;
 

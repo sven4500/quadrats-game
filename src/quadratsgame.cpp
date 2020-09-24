@@ -9,15 +9,12 @@ QuadratsGame::QuadratsGame(QWidget* parent):
     QMainWindow(parent), m_settingsDialog(this), m_timer(this),
     m_isNetModeOn(false)
 {
-    // Размер игрового пространства должен быть всегда меньше полного размера
-    // пространства. Также игровое поле должно быть нечётным поэтому | 1.
-    m_dimFull = 14;
-    m_dim = m_dimFull * 0.75;
-    m_dim |= 1;
+    setDim(11);
 
-    m_logic.resetState(m_dim);
     m_composer.setLogic(&m_logic);
     connect(&m_netCoop, &NetCoop::dataRead, this, &QuadratsGame::dataReady);
+
+    connect(&m_settingsDialog, &QDialog::accepted, this, &QuadratsGame::applySettings);
 
     QMenuBar* const menu = menuBar();
 
@@ -68,6 +65,27 @@ QuadratsGame::QuadratsGame(QWidget* parent):
 QuadratsGame::~QuadratsGame()
 {
     m_timer.stop();
+}
+
+void QuadratsGame::applySettings()
+{
+    setDim(m_settingsDialog.getDim());
+    m_timer.setInterval(1000 / m_settingsDialog.getFPS());
+}
+
+void QuadratsGame::setDim(int dim)
+{
+    // Размер игрового пространства должен быть всегда меньше полного размера
+    // пространства. Также игровое поле должно быть нечётным поэтому | 1.
+    m_dim = dim;
+    m_dim |= 1;
+
+    // Размер игрового пространства с учётом рамок больше ращмера игрового поля,
+    // а также чётный.
+    m_dimFull = (m_dim + 1) * 1.25;
+    m_dimFull &= -2;
+
+    m_logic.resetState(m_dim);
 }
 
 void QuadratsGame::hostGame()

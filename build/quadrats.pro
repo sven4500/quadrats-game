@@ -4,6 +4,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TEMPLATE = app
 CONFIG += c++11
 
+VERSION = 1.0.0
+DEFINES += APP_NAME=\\\"Quadrats\\\" APP_VERSION=\\\"$$VERSION\\\"
+
 PROJECT_DIR = $$PWD/../
 SRC_DIR = $$PROJECT_DIR/src/
 INCLUDE_DIR = $$PROJECT_DIR/include/

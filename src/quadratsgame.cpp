@@ -3,13 +3,9 @@
 #include <QMessageBox>
 #include <quadratsgame.h>
 #include <transform.h>
-#include <version.h>
 
-#ifdef _DEBUG
-QString const QuadratsGame::m_windowTitle = QString("Квадраты (сборка %1 отладка)").arg(BuildVersion);
-#else
-QString const QuadratsGame::m_windowTitle = QString("Квадраты (сборка %1)").arg(BuildVersion);
-#endif
+QString const QuadratsGame::m_windowTitle =
+    QString("%1 %2").arg(APP_NAME).arg(APP_VERSION);
 
 QuadratsGame::QuadratsGame(QWidget* parent):
     QMainWindow(parent), m_settingsDialog(this), m_timer(this),

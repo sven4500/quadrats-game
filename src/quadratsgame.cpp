@@ -19,33 +19,16 @@ QuadratsGame::QuadratsGame(QWidget* parent):
     connect(&m_settingsDialog, &QDialog::accepted, this, &QuadratsGame::applySettings);
 
     QMenuBar* const menu = menuBar();
+    m_newGameAct = menu->addAction("New");
+    m_joinGameAct = menu->addAction("Join");
+    m_createGameAct = menu->addAction("Create");
+    m_settingsAct = menu->addAction("Settings");
+    m_howToAct = menu->addAction("Help");
+    m_aboutAct = menu->addAction("About");
 
-    m_newGameAct = menu->addAction("");
-    m_newGameAct->setToolTip("Новая игра");
-    m_newGameAct->setIcon(QIcon(":/new-game.ico"));
-
-    m_joinGameAct = menu->addAction("");
-    m_joinGameAct->setToolTip("Присоединиться");
-    m_joinGameAct->setIcon(QIcon(":/join.ico"));
     connect(m_joinGameAct, &QAction::triggered, this, &QuadratsGame::joinGame);
-
-    m_createGameAct = menu->addAction("");
-    m_createGameAct->setToolTip("Создать игру");
-    m_createGameAct->setIcon(QIcon(":/host.ico"));
     connect(m_createGameAct, &QAction::triggered, this, &QuadratsGame::hostGame);
-
-    m_settingsAct = menu->addAction("");
-    m_settingsAct->setToolTip("Настройки");
-    m_settingsAct->setIcon(QIcon(":/settings.ico"));
     connect(m_settingsAct, &QAction::triggered, &m_settingsDialog, &QDialog::exec);
-
-    m_howToAct = menu->addAction("Как играть");
-    m_howToAct->setToolTip("Как играть");
-    m_howToAct->setIcon(QIcon(":/how-to-play.ico"));
-
-    m_aboutAct = menu->addAction("");
-    m_aboutAct->setToolTip("О программе");
-    m_aboutAct->setIcon(QIcon(":/about.ico"));
 
     connect(&m_timer, &QTimer::timeout, this, static_cast<void (QWidget::*)()>(&QWidget::update));
     m_timer.setInterval(50);

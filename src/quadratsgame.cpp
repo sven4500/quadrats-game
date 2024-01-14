@@ -21,7 +21,7 @@ QuadratsGame::QuadratsGame(QWidget* parent):
     QMenuBar* const menu = menuBar();
     m_newGameAct = menu->addAction("New");
     m_joinGameAct = menu->addAction("Join");
-    m_createGameAct = menu->addAction("Create");
+    m_createGameAct = menu->addAction("Host");
     m_settingsAct = menu->addAction("Settings");
     m_howToAct = menu->addAction("Help");
     m_aboutAct = menu->addAction("About");
@@ -74,9 +74,9 @@ void QuadratsGame::hostGame()
     auto value = m_netCoop.hostGame(m_settingsDialog.getPort());
 
     if(value == false)
-        QMessageBox::critical(this, "Ошибка", "Не удалось создать игру.");
+        QMessageBox::critical(this, "Error", "Failed to create server");
     else
-        QMessageBox::information(this, "Успех", "Игра создана!");
+        QMessageBox::information(this, "Success", "Server created successfully");
 }
 
 void QuadratsGame::joinGame()
@@ -89,9 +89,9 @@ void QuadratsGame::joinGame()
     auto value = m_netCoop.joinGame(m_settingsDialog.getIpAddress(), m_settingsDialog.getPort());
 
     if(value == false)
-        QMessageBox::critical(this, "Ошибка", "Не удалось установить соединение.");
+        QMessageBox::critical(this, "Error", "Server didn't respond");
     else
-        QMessageBox::information(this, "Успех", "Соединение установлено!");
+        QMessageBox::information(this, "Success", "Connection with server established");
 }
 
 void QuadratsGame::dataReady(Line const& line)

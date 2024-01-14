@@ -1,11 +1,5 @@
 <RCC>
     <qresource prefix="/">
         <file>app.ico</file>
-        <file>new-game.ico</file>
-        <file>settings.ico</file>
-        <file>host.ico</file>
-        <file>join.ico</file>
-        <file>how-to-play.ico</file>
-        <file>about.ico</file>
     </qresource>
 </RCC>

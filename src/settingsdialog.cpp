@@ -6,7 +6,7 @@ SettingsDialog::SettingsDialog(QWidget* parent):
     QDialog(parent)
 {
     _frameRateSpin = new QSpinBox(this);
-    _frameRateSpin->setSuffix(" к/с");
+    _frameRateSpin->setSuffix(" fps");
     _frameRateSpin->setMinimum(1);
     _frameRateSpin->setMaximum(60);
     _frameRateSpin->setValue(20);
@@ -25,18 +25,18 @@ SettingsDialog::SettingsDialog(QWidget* parent):
     _portEdit->setText("8200");
 
     _okBut = new QPushButton(this);
-    _okBut->setText("ОК");
+    _okBut->setText("Ok");
     connect(_okBut, &QPushButton::clicked, this, &QDialog::accept);
 
     _cancelBut = new QPushButton(this);
-    _cancelBut->setText("Отмена");
+    _cancelBut->setText("Cancel");
     connect(_cancelBut, &QPushButton::clicked, this, &QDialog::reject);
 
     QLabel* const label[4] = {
-        new QLabel("Частота кадров", this),
-        new QLabel("Размер поля", this),
-        new QLabel("IP адрес", this),
-        new QLabel("Порт", this)
+        new QLabel("Frame rate", this),
+        new QLabel("Map size", this),
+        new QLabel("IP address", this),
+        new QLabel("Port number", this)
     };
 
     QGridLayout* const layout = new QGridLayout(this);
@@ -57,7 +57,8 @@ SettingsDialog::SettingsDialog(QWidget* parent):
     setLayout(layout);
     setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint |
         Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
-    setWindowTitle("Настройки");
+
+    setWindowTitle("Settings");
 }
 
 SettingsDialog::~SettingsDialog()
